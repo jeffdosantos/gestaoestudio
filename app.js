@@ -413,8 +413,6 @@ function renderTaskCard(task) {
   const dueToday = isDueToday(task);
   const blocked = task.bloqueado || task.status === "bloqueado" || task.etapa === "bloqueado";
   const links = renderLinks(task);
-  const checklist = Array.isArray(task.checklist) ? task.checklist : [];
-  const checklistDone = checklist.filter((item) => item.done).length;
 
   return `
     <article class="task-card priority-${escapeHTML(task.prioridade || "media")} ${overdue ? "overdue" : ""} ${blocked ? "blocked" : ""}" draggable="true" data-task-id="${task.id}">
@@ -429,6 +427,7 @@ function renderTaskCard(task) {
       <div class="tags">
         <span class="tag ${escapeHTML(task.prioridade || "media")}">${PRIORITY_LABELS[task.prioridade] || "Média"}</span>
         <span class="tag status-${escapeHTML(task.status || "em_andamento")}">${STATUS_LABELS[task.status] || "Em andamento"}</span>
+        ${task.tipo_demanda ? `<span class="tag">${escapeHTML(task.tipo_demanda)}</span>` : ""}
         ${overdue ? `<span class="tag urgente">⚠️ Atrasado</span>` : ""}
         ${dueToday ? `<span class="tag alta">Hoje</span>` : ""}
         ${blocked ? `<span class="tag status-bloqueado">🔒 Bloqueado</span>` : ""}
@@ -440,12 +439,9 @@ function renderTaskCard(task) {
       </div>
 
       <div class="card-detail">
-        ${task.tipo_demanda ? `<span><strong>Tipo:</strong> ${escapeHTML(task.tipo_demanda)}</span>` : ""}
         <span><strong>Prazo:</strong> ${formatDate(task.prazo)}</span>
-        ${task.proxima_acao ? `<span><strong>Próxima ação:</strong> ${escapeHTML(task.proxima_acao)}</span>` : ""}
-        ${task.motivo_bloqueio ? `<span><strong>Bloqueio:</strong> ${escapeHTML(task.motivo_bloqueio)}</span>` : ""}
-        ${checklist.length ? `<span><strong>Checklist:</strong> ${checklistDone}/${checklist.length} concluídos</span>` : ""}
-        ${task.updated_at ? `<span><strong>Atualizado:</strong> ${formatDateTime(task.updated_at)}${task.updated_by ? ` por ${escapeHTML(task.updated_by)}` : ""}</span>` : ""}
+        ${task.proxima_acao ? `<span><strong>Próxima:</strong> ${escapeHTML(task.proxima_acao)}</span>` : ""}
+        ${blocked && task.motivo_bloqueio ? `<span><strong>Bloqueio:</strong> ${escapeHTML(task.motivo_bloqueio)}</span>` : ""}
       </div>
 
       ${links ? `<div class="card-links">${links}</div>` : ""}

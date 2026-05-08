@@ -141,11 +141,11 @@ end $$;
 -- TROQUE estes e-mails pelos e-mails reais da equipe antes de pedir para as pessoas acessarem.
 insert into public.team_members (nome, email, cor, funcao, active)
 values
-  ('Vagner Monteiro', 'vagulart1@oscarasdoadesivo.com', '#2563eb', 'Designer Senior', true),
-  ('Jefferson Ferreira', 'jefferson@oscarasdoadesivo.com', '#16a34a', 'Designer', true),
-  ('Faviana Monteiro', 'pessoa3@studio.com', '#7c3aed', 'Diretora Geral', true),
-  ('Daiane Monteiro', 'pessoa4@studio.com', '#f97316', 'Coordenadora de Produção', true),
-  ('Luana Ferreira', 'pessoa5@studio.com', '#db2777', 'Atendimento/Revisão', true)
+  ('Pessoa 1', 'pessoa1@studio.com', '#2563eb', 'Designer', true),
+  ('Pessoa 2', 'pessoa2@studio.com', '#16a34a', 'Designer', true),
+  ('Pessoa 3', 'pessoa3@studio.com', '#7c3aed', 'UX/UI', true),
+  ('Pessoa 4', 'pessoa4@studio.com', '#f97316', 'Direção de arte', true),
+  ('Pessoa 5', 'pessoa5@studio.com', '#db2777', 'Atendimento/Revisão', true)
 on conflict (email) do update set
   nome = excluded.nome,
   cor = excluded.cor,
