@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Controle de Clientes - Estúdio de Criação</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <section id="authScreen" class="auth-screen">
+      <div class="auth-card">
+        <p class="eyebrow">Estúdio de Criação</p>
+        <h1>Controle de Clientes e Fluxo de Produção</h1>
+        <p class="muted">
+          Entre com o e-mail da equipe para acessar o Kanban colaborativo.
+        </p>
+
+        <div id="setupWarning" class="warning hidden">
+          Configure o arquivo <strong>config.js</strong> com a URL e a chave pública anon do Supabase.
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <label>
+            E-mail
+            <input id="emailInput" type="email" autocomplete="email" required placeholder="voce@estudio.com" />
+          </label>
+          <label>
+            Senha
+            <input id="passwordInput" type="password" autocomplete="current-password" required minlength="6" placeholder="mínimo 6 caracteres" />
+          </label>
+          <div class="auth-actions">
+            <button type="submit" class="button primary">Entrar</button>
+            <button type="button" id="signupButton" class="button ghost">Criar acesso</button>
+          </div>
+          <p class="hint">
+            O e-mail precisa estar cadastrado como membro ativo na tabela <code>team_members</code>.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <section id="app" class="app hidden">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Kanban colaborativo</p>
+          <h1>Controle de Clientes e Fluxo de Produção</h1>
+        </div>
+        <div class="topbar-actions">
+          <span id="currentUser" class="user-pill">Conectando...</span>
+          <button id="refreshButton" class="button secondary">Atualizar</button>
+          <button id="logoutButton" class="button ghost">Sair</button>
+        </div>
+      </header>
+
+      <section class="toolbar">
+        <button id="newTaskButton" class="button primary">+ Novo card</button>
+        <label class="search-field">
+          Buscar
+          <input id="searchInput" type="search" placeholder="Cliente, projeto ou próxima ação" />
+        </label>
+        <label>
+          Responsável
+          <select id="responsavelFilter">
+            <option value="">Todos</option>
+          </select>
+        </label>
+        <label>
+          Prioridade
+          <select id="priorityFilter">
+            <option value="">Todas</option>
+            <option value="urgente">Urgente</option>
+            <option value="alta">Alta</option>
+            <option value="media">Média</option>
+            <option value="baixa">Baixa</option>
+          </select>
+        </label>
+        <label>
+          Etapa
+          <select id="stageFilter">
+            <option value="">Todas</option>
+          </select>
+        </label>
+        <label class="check-filter">
+          <input id="overdueFilter" type="checkbox" />
+          Só atrasados
+        </label>
+        <label class="check-filter">
+          <input id="blockedFilter" type="checkbox" />
+          Só bloqueados
+        </label>
+      </section>
+
+      <section class="workspace">
+        <main id="board" class="board" aria-label="Quadro Kanban"></main>
+
+        <aside class="sidebar">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Indicadores</h2>
+              <span class="muted">semana atual</span>
+            </div>
+            <div id="metrics" class="metrics"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Prazos críticos</h2>
+              <span class="muted">próximos 7 dias</span>
+            </div>
+            <div id="deadlines" class="compact-list"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Bloqueios</h2>
+              <span class="muted">precisam de decisão</span>
+            </div>
+            <div id="blockers" class="compact-list"></div>
+          </section>
+
+          <section class="panel wide-panel">
+            <div class="panel-header">
+              <h2>Visão por cliente</h2>
+              <span class="muted">resumo ativo</span>
+            </div>
+            <div class="table-scroll">
+              <table id="clientTable">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Demanda</th>
+                    <th>Resp.</th>
+                    <th>Etapa</th>
+                    <th>Prazo</th>
+                    <th>Próxima ação</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </section>
+
+    <dialog id="taskDialog" class="task-dialog">
+      <form id="taskForm" method="dialog">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Card de demanda</p>
+            <h2 id="dialogTitle">Novo card</h2>
+          </div>
+          <button type="button" id="closeDialogButton" class="icon-button" aria-label="Fechar">×</button>
+        </div>
+
+        <input type="hidden" name="id" id="taskId" />
+
+        <div class="form-grid">
+          <label>
+            Cliente *
+            <input name="cliente" required placeholder="Ex.: Cliente A" />
+          </label>
+          <label>
+            Projeto / demanda *
+            <input name="titulo" required placeholder="Ex.: Carrossel institucional" />
+          </label>
+          <label>
+            Tipo de peça
+            <select name="tipo_demanda" id="tipoDemandaSelect"></select>
+          </label>
+          <label>
+            Responsável principal
+            <select name="responsavel_id" id="responsavelSelect"></select>
+          </label>
+          <label>
+            Apoio / revisor
+            <select name="revisor_id" id="revisorSelect"></select>
+          </label>
+          <label>
+            Prioridade
+            <select name="prioridade">
+              <option value="urgente">Urgente</option>
+              <option value="alta">Alta</option>
+              <option value="media" selected>Média</option>
+              <option value="baixa">Baixa</option>
+            </select>
+          </label>
+          <label>
+            Prazo final
+            <input name="prazo" type="date" />
+          </label>
+          <label>
+            Data de entrada
+            <input name="data_entrada" type="date" />
+          </label>
+          <label>
+            Etapa atual
+            <select name="etapa" id="etapaSelect"></select>
+          </label>
+          <label>
+            Status
+            <select name="status">
+              <option value="em_andamento">Em andamento</option>
+              <option value="revisao_interna">Revisão interna</option>
+              <option value="aguardando_cliente">Aguardando cliente</option>
+              <option value="bloqueado">Bloqueado</option>
+              <option value="aprovado">Aprovado</option>
+              <option value="entregue">Entregue</option>
+            </select>
+          </label>
+          <label>
+            Canal de solicitação
+            <input name="canal_solicitacao" placeholder="WhatsApp, e-mail, reunião..." />
+          </label>
+          <label>
+            Próxima ação
+            <input name="proxima_acao" placeholder="Ex.: enviar primeira versão" />
+          </label>
+          <label>
+            Link do briefing
+            <input name="link_briefing" type="url" placeholder="https://" />
+          </label>
+          <label>
+            Link dos arquivos
+            <input name="link_arquivos" type="url" placeholder="https://" />
+          </label>
+          <label>
+            Link Figma / Drive
+            <input name="link_figma_drive" type="url" placeholder="https://" />
+          </label>
+          <label class="checkbox-row">
+            <input name="bloqueado" type="checkbox" />
+            Marcar como bloqueado
+          </label>
+          <label class="full">
+            Motivo do bloqueio
+            <input name="motivo_bloqueio" placeholder="O que impede esse card de andar?" />
+          </label>
+          <label class="full">
+            Observações importantes
+            <textarea name="observacoes" rows="3" placeholder="Informações que a equipe precisa saber"></textarea>
+          </label>
+          <label class="full">
+            Checklist — uma linha por item
+            <textarea name="checklist_text" rows="5" placeholder="Briefing recebido&#10;Textos recebidos&#10;Revisão interna feita&#10;Enviado ao cliente"></textarea>
+          </label>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" id="deleteTaskButton" class="button danger hidden">Excluir</button>
+          <span class="spacer"></span>
+          <button type="button" id="cancelTaskButton" class="button ghost">Cancelar</button>
+          <button type="submit" class="button primary">Salvar card</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
