@@ -142,7 +142,7 @@ end $$;
 insert into public.team_members (nome, email, cor, funcao, active)
 values
   ('Vagner Monteiro', 'vagulart1@oscarasdoadesivo.com', '#2563eb', 'Designer Senior', true),
-  ('Jefferson Ferreira', 'jefferson@oscarasdoadesivo.com.br', '#16a34a', 'Designer', true),
+  ('Jefferson Ferreira', 'jefferson@oscarasdoadesivo.com', '#16a34a', 'Designer', true),
   ('Faviana Monteiro', 'pessoa3@studio.com', '#7c3aed', 'Diretora Geral', true),
   ('Daiane Monteiro', 'pessoa4@studio.com', '#f97316', 'Coordenadora de Produção', true),
   ('Luana Ferreira', 'pessoa5@studio.com', '#db2777', 'Atendimento/Revisão', true)
