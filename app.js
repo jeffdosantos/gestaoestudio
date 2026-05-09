@@ -381,3 +381,11 @@ function enableBoardMouseScroll() {
 }
 
 enableBoardMouseScroll();
+function renderBoard(){
+  let fs = filtered();
+
+  dom.board.innerHTML = COLUMNS.map(...).join("");
+
+  attachDrag();
+  enableBoardMouseScroll();
+}
