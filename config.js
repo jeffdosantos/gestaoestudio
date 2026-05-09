@@ -1,2 +1,2 @@
-export const SUPABASE_URL = "https://SEU-PROJETO.supabase.co";
-export const SUPABASE_ANON_KEY = "SUA_CHAVE_PUBLICA_ANON_OU_PUBLISHABLE";
+export const SUPABASE_URL = "https://isjhrccbvgznzecqhwom.supabase.co";
+export const SUPABASE_ANON_KEY = "sb_publishable_xbUUw5xAwXfIz2WxXqZPzw_GUxOfhkc";
