@@ -85,9 +85,18 @@ const dom = {
   rules: $("#rulesList")
 };
 if (dom.filterToggle && dom.filterPanel) {
-  dom.filterToggle.onclick = () => {
+  dom.filterToggle.onclick = (e) => {
+    e.stopPropagation();
     dom.filterPanel.classList.toggle("hidden");
   };
+
+  dom.filterPanel.onclick = (e) => {
+    e.stopPropagation();
+  };
+
+  document.addEventListener("click", () => {
+    dom.filterPanel.classList.add("hidden");
+  });
 }
 let supabase=null, session=null, member=null, members=[], tasks=[], channel=null;
 let activeQuickFilter = "";
