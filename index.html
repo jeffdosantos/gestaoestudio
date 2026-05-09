@@ -42,8 +42,26 @@
         <span>📣 Reunião: <strong>Daily às 09h30</strong></span>
       </div>
     </header>
-    <section class="quick-stats" id="quickStats"></section>
-    <nav class="tabs" id="tabs">
+<div class="flow-highlights">
+  <div class="flow-pill today">
+    <span class="pill-dot"></span>
+    <strong id="todayCount">0</strong>
+    <span>Hoje</span>
+  </div>
+
+  <div class="flow-pill overdue">
+    <span class="pill-dot"></span>
+    <strong id="overdueCount">0</strong>
+    <span>Atrasados</span>
+  </div>
+
+  <div class="flow-pill delivered">
+    <span class="pill-dot"></span>
+    <strong id="weekDeliveredCount">0</strong>
+    <span>Entregas da semana</span>
+  </div>
+   </div>
+  <nav class="tabs" id="tabs">
       <button class="tab active" data-tab="kanban">📋 Kanban</button>
       <button class="tab" data-tab="clientes">👥 Clientes</button>
       <button class="tab" data-tab="equipe">🧑‍🎨 Equipe</button>
