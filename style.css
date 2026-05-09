@@ -545,7 +545,6 @@
 #weekRange {
   display: none;
 }
-.filter-panel #logoutButton,
-.toolbar #logoutButton {
+#logoutButton {
   display: none !important;
 }
