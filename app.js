@@ -85,3 +85,16 @@ dom.newBtn.onclick=()=>openTask();dom.addClient.onclick=()=>openTask();dom.close
 dom.login.onsubmit=async e=>{e.preventDefault();if(!supabase)return toast("Configure o Supabase primeiro.","error");let {data,error}=await supabase.auth.signInWithPassword({email:dom.email.value,password:dom.pass.value});if(error)return toast(error.message,"error");start(data.session)}
 dom.signup.onclick=async()=>{if(!supabase)return toast("Configure o Supabase primeiro.","error");let {error}=await supabase.auth.signUp({email:dom.email.value,password:dom.pass.value});toast(error?error.message:"Acesso criado. Confirme o e-mail se o Supabase solicitar.",error?"error":"")}
 fillSelects(); if(valid){supabase.auth.getSession().then(({data})=>data.session?start(data.session):showAuth());supabase.auth.onAuthStateChange((_e,s)=>{if(s&&!session)start(s)})}else showAuth();
+const board = document.querySelector('.kanban-board');
+if (board) {
+  board.addEventListener(
+    'wheel',
+    (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        board.scrollLeft += e.deltaY;
+      }
+    },
+    { passive: false }
+  );
+}
