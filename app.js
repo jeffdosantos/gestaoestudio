@@ -122,8 +122,7 @@ function subscribe(){if(channel)supabase.removeChannel(channel);channel=supabase
 function renderAll(){renderDates();renderQuick();renderBoard();renderClients();renderTeam();renderDeadlines();renderBlockers();renderMetrics();renderArchive();renderStatic()}
 function renderDates(){let s=startWeek(),e=addDays(s,4),f=new Intl.DateTimeFormat("pt-BR",{day:"2-digit",month:"2-digit"});dom.week.textContent=`${f.format(s)} – ${f.format(e)}/${e.getFullYear()}`;dom.updated.textContent=new Intl.DateTimeFormat("pt-BR").format(new Date())}
 function renderQuick(){let active=tasks.filter(t=>!isDone(t)).length, creation=tasks.filter(t=>t.etapa==="criacao").length, blocked=tasks.filter(isBlocked).length, wait=tasks.filter(t=>t.status==="aguardando_cliente"||t.etapa==="enviado_cliente").length;dom.quick.innerHTML=[["mini-blue",active,"Cards ativos"],["mini-purple",creation,"Em criação"],["mini-red",blocked,"Bloqueados"],["mini-grey",wait,"Aguard. cliente"]].map(([c,n,l])=>`<div class="mini-stat ${c}"><strong>${n}</strong>${l}</div>`).join("")}
-function enableBoardMouseScroll() {
-  const board = document.querySelector(".board");
+const board = document.querySelector(".board");
 
   if (!board) return;
 
