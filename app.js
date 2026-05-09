@@ -5,7 +5,7 @@ const COLUMNS=[
 ["entrada","(1) Entrada / Nova Demanda","#71839b","Arraste um card aqui"],
 ["triagem","(2) Triagem / Organização","#de8500","Arraste um card aqui"],
 ["briefing","(3) Briefing","#d89a00",""],
-["planejamento","(4) Planejamento / Fila de Produção","#3b82f6",""],
+["planejamento","(4) Fila de Produção","#3b82f6",""],
 ["criacao","(5) Criação em Andamento","#1d4ed8","máx. 2 por designer"],
 ["revisao","(6) Revisão Interna","#7c3aed",""],
 ["enviado_cliente","(7) Enviado ao Cliente","#64748b",""],
