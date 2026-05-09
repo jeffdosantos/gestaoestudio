@@ -369,19 +369,6 @@ if (dom.closeDetails) {
   dom.closeDetails.onclick = () => dom.detailsDialog.close();
 }
 const boardScroller = document.querySelector(".board");
-
-if (boardScroller) {
-  boardScroller.addEventListener("wheel", (e) => {
-    const isHorizontalIntent =
-      Math.abs(e.deltaY) > Math.abs(e.deltaX);
-
-    if (isHorizontalIntent) {
-      e.preventDefault();
-
-      boardScroller.scrollLeft += e.deltaY;
-    }
-  }, { passive: false });
-}
 if (boardScroller) {
   boardScroller.addEventListener("wheel", (e) => {
     const isHorizontalIntent = Math.abs(e.deltaY) > Math.abs(e.deltaX);
