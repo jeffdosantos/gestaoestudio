@@ -66,42 +66,80 @@
   color: #111827;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
-
-/* VISÃO GERAL / COMPACTA */
+/* VISÃO GERAL REAL: todas as etapas em grade */
 body.overview-mode .kanban-board,
 body.overview-mode .board {
-  gap: 10px;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 14px !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  align-items: start;
 }
 
 body.overview-mode .kanban-column,
 body.overview-mode .column {
-  min-width: 210px;
-  width: 210px;
+  width: auto !important;
+  min-width: 0 !important;
+  max-height: none !important;
+  height: auto !important;
 }
 
-body.overview-mode .kanban-card,
-body.overview-mode .task-card {
-  padding: 10px;
-  border-radius: 14px;
-  gap: 6px;
+body.overview-mode .column-header,
+body.overview-mode .kanban-column-header {
+  padding: 12px !important;
 }
 
-body.overview-mode .kanban-card .description,
-body.overview-mode .kanban-card .checklist,
-body.overview-mode .kanban-card .links,
-body.overview-mode .task-card .card-detail,
-body.overview-mode .task-card .card-links {
+body.overview-mode .column-help,
+body.overview-mode .wip {
   display: none !important;
 }
 
-body.overview-mode .kanban-card h3,
-body.overview-mode .task-card h3 {
-  font-size: 13px;
-  line-height: 1.25;
+body.overview-mode .card-list,
+body.overview-mode .kanban-card-list {
+  max-height: 260px !important;
+  overflow-y: auto !important;
+  padding: 10px !important;
+  gap: 8px !important;
+}
+
+body.overview-mode .task-card,
+body.overview-mode .kanban-card {
+  padding: 10px !important;
+  border-radius: 14px !important;
+  gap: 6px !important;
+  box-shadow: none !important;
+}
+
+body.overview-mode .task-title,
+body.overview-mode .kanban-card h3 {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+
+body.overview-mode .client-name {
+  font-size: 10px !important;
+}
+
+body.overview-mode .card-detail,
+body.overview-mode .card-links,
+body.overview-mode .assignee span:not(.avatar),
+body.overview-mode .column-help {
+  display: none !important;
+}
+
+body.overview-mode .tags {
+  gap: 4px !important;
 }
 
 body.overview-mode .tag,
 body.overview-mode .badge {
-  font-size: 10px;
-  padding: 3px 6px;
+  font-size: 10px !important;
+  padding: 3px 6px !important;
+}
+
+body.overview-mode .avatar {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 10px !important;
 }
