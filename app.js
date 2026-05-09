@@ -33,7 +33,7 @@ const DEFAULT_CHECKLIST = [
   "Cliente confirmado"
 ];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const dom={filterToggle: $("#miniLogoutButton")?.addEventListener("click", () => {
+const dom={filterToggle:$("#miniLogoutButton")?.addEventListener("click", () => {
   supabase.auth.signOut().then(() => location.reload());
 });$("#filterToggleButton"),filterPanel: $("#filterPanel"),auth:$("#authScreen"),app:$("#app"),warning:$("#setupWarning"),login:$("#loginForm"),signup:$("#signupButton"),email:$("#emailInput"),pass:$("#passwordInput"),toast:$("#toast"),
 week:$("#weekRange"),updated:$("#updatedDate"),organizer:$("#organizer"),quick:$("#quickStats"),tabs:$("#tabs"),toolbar:$(".toolbar"),
