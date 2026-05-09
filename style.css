@@ -482,3 +482,20 @@
   background: #f8fafc;
   color: #0f172a;
 }
+.hero-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hero-info span {
+  font-size: 14px;
+}
