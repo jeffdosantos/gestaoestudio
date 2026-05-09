@@ -585,8 +585,10 @@ body {
 }
 
 .filter-dropdown {
-  position: relative;
+  position: absolute;
   flex: 0 0 auto;
+  right: 0;
+  left: auto;
 }
 
 .filter-panel {
