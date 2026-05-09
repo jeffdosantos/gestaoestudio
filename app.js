@@ -98,39 +98,3 @@ if (board) {
     { passive: false }
   );
 }
-function updateFlowHighlights(tasks = []) {
-  const today = new Date();
-
-  const todayStr = today.toISOString().split("T")[0];
-
-  const todayTasks = tasks.filter((task) => {
-    return task.prazo === todayStr;
-  });
-
-  const overdueTasks = tasks.filter((task) => {
-    if (!task.prazo) return false;
-
-    const prazo = new Date(task.prazo);
-    return prazo < today && task.status !== "entregue";
-  });
-
-  const deliveredWeek = tasks.filter((task) => {
-    return task.status === "entregue";
-  });
-
-  const todayEl = document.querySelector("#todayCount");
-  const overdueEl = document.querySelector("#overdueCount");
-  const deliveredEl = document.querySelector("#weekDeliveredCount");
-
-  if (todayEl) {
-    todayEl.textContent = todayTasks.length;
-  }
-
-  if (overdueEl) {
-    overdueEl.textContent = overdueTasks.length;
-  }
-
-  if (deliveredEl) {
-    deliveredEl.textContent = deliveredWeek.length;
-  }
-}
