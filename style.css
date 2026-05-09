@@ -796,8 +796,8 @@ body {
 @media (max-width: 700px) {
 
   .filter-panel {
-    right: auto;
-    left: 0;
+    right: 0;
+    left: auto;
 
     width: 280px;
 
@@ -819,4 +819,28 @@ body {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+.flow-highlights,
+.top-search-actions,
+.filter-dropdown {
+  overflow: visible !important;
+}
+
+.filter-dropdown {
+  position: relative !important;
+}
+
+.filter-panel {
+  position: absolute !important;
+  top: calc(100% + 12px) !important;
+
+  left: auto !important;
+  right: 0 !important;
+
+  width: 285px !important;
+  max-width: 285px !important;
+
+  transform: none !important;
+
+  z-index: 99999 !important;
 }
