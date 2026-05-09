@@ -62,9 +62,26 @@
       <button class="tab" data-tab="checkin">✅ Check-in</button>
       <button class="tab" data-tab="regras">📜 Regras</button>
       <button class="tab" data-tab="metricas">📊 Métricas</button>
-      <button class="tab" data-tab="arquivo">📦 Arquivo</button>
+      <button class="tab" data-tab="arquivo">📦 Arquivo</button> <div class="flow-highlights">
+  <div class="flow-pill today">
+    <span class="pill-dot"></span>
+    <strong id="todayCount">0</strong>
+    <span>Hoje</span>
+  </div>
+
+  <div class="flow-pill overdue">
+    <span class="pill-dot"></span>
+    <strong id="overdueCount">0</strong>
+    <span>Atrasados</span>
+  </div>
+
+  <div class="flow-pill delivered">
+    <span class="pill-dot"></span>
+    <strong id="weekDeliveredCount">0</strong>
+    <span>Entregas da semana</span>
+  </div>
+</div>
     </nav>
-    <section class="quick-stats" id="quickStats"></section>
     <section class="toolbar">
       <button id="newTaskButton" class="btn primary">+ Novo card</button>
       <input id="searchInput" class="search" type="search" placeholder="Buscar cliente, projeto ou próxima ação..." />
