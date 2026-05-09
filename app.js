@@ -238,6 +238,48 @@ function deriveStatusFromStage(stageId) {
   return map[stageId] || "em_andamento";
 }
 
+function normalizeTaskState(payload) {
+  if (payload.bloqueado) {
+    return {
+      ...payload,
+      etapa: "bloqueado",
+      status: "bloqueado"
+    };
+  }
+
+  if (payload.etapa === "bloqueado" || payload.status === "bloqueado") {
+    const etapa = payload.etapa === "bloqueado" ? "triagem" : payload.etapa;
+    return {
+      ...payload,
+      etapa,
+      status: deriveStatusFromStage(etapa)
+    };
+  }
+
+  return {
+    ...payload,
+    status: deriveStatusFromStage(payload.etapa)
+  };
+}
+
+function syncTaskStateFields() {
+  const bloqueadoField = dom.taskForm.elements.bloqueado;
+  const etapaField = dom.taskForm.elements.etapa;
+  const statusField = dom.taskForm.elements.status;
+
+  if (bloqueadoField.checked) {
+    etapaField.value = "bloqueado";
+    statusField.value = "bloqueado";
+    return;
+  }
+
+  if (etapaField.value === "bloqueado" || statusField.value === "bloqueado") {
+    etapaField.value = etapaField.value === "bloqueado" ? "triagem" : etapaField.value;
+  }
+
+  statusField.value = deriveStatusFromStage(etapaField.value);
+}
+
 function populateStaticSelects() {
   dom.tipoDemandaSelect.innerHTML = ["<option value=\"\">Selecione</option>"]
     .concat(DEMAND_TYPES.map((type) => `<option value="${escapeHTML(type)}">${escapeHTML(type)}</option>`))
@@ -690,6 +732,7 @@ function openTaskDialog(task = null) {
     }
   });
 
+  syncTaskStateFields();
   dom.taskDialog.showModal();
 }
 
@@ -702,7 +745,7 @@ async function saveTask(event) {
   const formData = new FormData(dom.taskForm);
   const id = nullIfEmpty(formData.get("id"));
 
-  const payload = {
+  let payload = {
     cliente: nullIfEmpty(formData.get("cliente")),
     titulo: nullIfEmpty(formData.get("titulo")),
     tipo_demanda: nullIfEmpty(formData.get("tipo_demanda")),
@@ -730,10 +773,7 @@ async function saveTask(event) {
     return;
   }
 
-  if (payload.bloqueado) {
-    payload.status = "bloqueado";
-    payload.etapa = "bloqueado";
-  }
+  payload = normalizeTaskState(payload);
 
   const request = id
     ? supabase.from("tasks").update(payload).eq("id", id).select().single()
@@ -837,6 +877,9 @@ function bindEvents() {
   dom.cancelTaskButton.addEventListener("click", closeTaskDialog);
   dom.taskForm.addEventListener("submit", saveTask);
   dom.deleteTaskButton.addEventListener("click", deleteCurrentTask);
+  dom.etapaSelect.addEventListener("change", syncTaskStateFields);
+  dom.taskForm.elements.status.addEventListener("change", syncTaskStateFields);
+  dom.taskForm.elements.bloqueado.addEventListener("change", syncTaskStateFields);
 
   [dom.searchInput, dom.responsavelFilter, dom.priorityFilter, dom.stageFilter, dom.overdueFilter, dom.blockedFilter].forEach((input) => {
     input.addEventListener("input", renderAll);
