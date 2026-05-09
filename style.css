@@ -548,3 +548,6 @@
 #logoutButton {
   display: none !important;
 }
+.board-scroll {
+  scroll-behavior: smooth;
+}
