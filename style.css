@@ -793,7 +793,7 @@ body {
   flex-direction: column;
   gap: 10px;
 
-  transform: translateX(-140px) !important;
+  transform: translateX(-90px) !important;
 }
 
 .filter-panel.hidden {
