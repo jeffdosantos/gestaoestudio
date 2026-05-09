@@ -795,18 +795,6 @@ body {
 
   transform: translateX(0);
 }
-@media (max-width: 700px) {
-
-  .filter-panel {
-    right: 0;
-    left: auto;
-
-    width: 280px;
-
-    transform: translateX(-55%);
-  }
-
-}
 .filter-panel {
   animation: filterIn .14s ease;
 }
