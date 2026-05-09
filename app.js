@@ -181,10 +181,7 @@ function attachDrag(){$$(".task-card").forEach(el=>{el.addEventListener("dragsta
   cardEl.onclick = e => {
     if (e.target.closest("[data-edit]")) return;
     openDetails(tasks.find(t => t.id === cardEl.dataset.id));
-  };
-});
-
-$$("[data-edit]").forEach(b => {
+    $$("[data-edit]").forEach(b => {
   b.onclick = e => {
     e.stopPropagation();
     openTask(tasks.find(t => t.id === b.dataset.edit));
@@ -199,8 +196,8 @@ $$(".column").forEach(col=>{col.ondragover=e=>e.preventDefault();col.ondrop=asyn
         dom.form.elements.etapa.value = btn.dataset.addStage;
       }
     }, 50);
-  };
-});
+  });
+}
 async function moveTask(id,etapa){let patch={etapa,status:statusFromStage(etapa),updated_by:session?.user?.email||null,bloqueado:etapa==="bloqueado"};let {error}=await supabase.from("tasks").update(patch).eq("id",id);if(error)return toast(error.message,"error");tasks=tasks.map(t=>t.id===id?{...t,...patch}:t);renderAll()}
 function renderClients(){dom.clientBody.innerHTML=filtered().filter(t=>!isDone(t)).map(t=>`<tr><td>${esc(t.cliente)}</td><td>${esc(t.titulo)}</td><td><span class="pill blue">${esc(memberName(t.responsavel_id))}</span></td><td>${esc(stageLabel(t.etapa))}</td><td>🗓️ ${fmt(t.prazo)}</td><td><span class="pill ${esc(t.prioridade||"media")}">● ${PRIORITY[t.prioridade]||"Média"}</span></td><td><span class="pill ${t.status==="revisao_interna"?"purple":t.status==="aguardando_cliente"?"grey":t.status==="bloqueado"?"red":t.status==="aprovado"?"green":"blue"}">${STATUS[t.status]||"Em andamento"}</span></td><td>→ ${esc(t.proxima_acao||"—")}</td><td><button class="card-menu" data-edit="${t.id}">✎</button></td></tr>`).join("");$$("[data-edit]").forEach(b=>b.onclick=()=>openTask(tasks.find(t=>t.id===b.dataset.edit)))}
 function renderTeam(){dom.team.innerHTML=members.map(m=>{let mine=tasks.filter(t=>t.responsavel_id===m.id&&!isDone(t)),doing=mine.filter(t=>["criacao","revisao","ajustes"].includes(t.etapa)).length,cap=Math.min(100,doing/4*100);return `<div class="team-card" style="--member:${esc(m.cor||"#2563eb")}"><div class="team-avatar">♙</div><h3>${esc(m.nome)}</h3><p class="muted">${esc(m.funcao||"Designer")}</p><div class="team-row"><span>Demandas ativas</span><span class="pill blue">${mine.length}</span></div><div class="team-row"><span>Cards em andamento</span><span class="pill grey">${doing}/4</span></div><p class="muted">Capacidade da semana</p><div class="capacity"><span style="width:${cap}%"></span></div><p class="muted">Observações<br>—</p></div>`}).join("")}
