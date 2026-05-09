@@ -431,7 +431,54 @@
   background: #ffffff;
   border: 1px solid #e5e7eb;
 }
-#refreshButton,
-#logoutButton {
+#refreshButton {
   display: none !important;
+}
+.top-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 30px;
+  padding: 0 12px;
+
+  border-radius: 999px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  color: #475569;
+}
+
+.mini-logout-btn {
+  height: 30px;
+  padding: 0 12px;
+
+  border-radius: 999px;
+
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  color: #64748b;
+
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.mini-logout-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
 }
