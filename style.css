@@ -542,3 +542,6 @@
   border: 0 !important;
   background: transparent !important;
 }
+#weekRange {
+  display: none;
+}
