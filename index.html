@@ -36,15 +36,15 @@
         </div>
       </div>
       <div class="hero-info">
-        <button id="refreshButton" class="btn ghost">↻</button>
-<span class="user-pill">jefferson</span>
-<button id="logoutButton" class="btn ghost">Sair</button>
         <span>🗓️ Semana: <strong id="weekRange">—</strong></span>
         <span>👤 Org. do quadro: <strong id="organizer">Pessoa 1</strong></span>
         <span>⏱️ Atualizado em: <strong id="updatedDate">—</strong></span>
         <span>📣 Reunião: <strong>Daily às 09h30</strong></span>
+          <button id="refreshButton" class="btn ghost">↻</button>
+<span class="user-pill">jefferson</span>
+<button id="logoutButton" class="btn ghost">Sair</button>
       </div>
-  
+
     </header>
 
 <section class="quick-stats" id="quickStats"></section>
@@ -151,6 +151,12 @@
       <div class="modal-actions"><button type="button" id="deleteTaskButton" class="btn danger">Excluir</button><span></span><button type="button" id="cancelTaskButton" class="btn ghost">Cancelar</button><button type="submit" class="btn primary">Salvar card</button></div>
     </form>
   </dialog>
+  <div style="display:none">
+  <button id="newTaskButton" type="button"></button>
+  <button id="refreshButton" type="button"></button>
+  <button id="logoutButton" type="button"></button>
+  <button id="newTaskButton" type="button" style="display:none"></button>
+</div>
   <script type="module" src="app.js"></script>
 </body>
 </html>
