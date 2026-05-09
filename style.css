@@ -153,3 +153,49 @@ body.overview-mode .task-title {
   color: #111827;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
+.flow-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0 8px;
+}
+
+.flow-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.flow-pill strong {
+  font-size: 16px;
+  color: #111827;
+}
+
+.flow-pill span:last-child {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.pill-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.flow-pill.today .pill-dot {
+  background: #3b82f6;
+}
+
+.flow-pill.overdue .pill-dot {
+  background: #ef4444;
+}
+
+.flow-pill.delivered .pill-dot {
+  background: #16a34a;
+}
