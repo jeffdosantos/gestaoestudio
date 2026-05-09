@@ -33,15 +33,62 @@ const DEFAULT_CHECKLIST = [
   "Cliente confirmado"
 ];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const dom={filterToggle:$("#miniLogoutButton")?.addEventListener("click", () => {
-  supabase.auth.signOut().then(() => location.reload());
-});$("#filterToggleButton"),filterPanel: $("#filterPanel"),auth:$("#authScreen"),app:$("#app"),warning:$("#setupWarning"),login:$("#loginForm"),signup:$("#signupButton"),email:$("#emailInput"),pass:$("#passwordInput"),toast:$("#toast"),
-week:$("#weekRange"),updated:$("#updatedDate"),organizer:$("#organizer"),quick:$("#quickStats"),tabs:$("#tabs"),toolbar:$(".toolbar"),
-newBtn:$("#newTaskButton"),refresh:$("#refreshButton"),logout:$("#logoutButton"),search:$("#searchInput"),respF:$("#responsavelFilter"),prioF:$("#priorityFilter"),stageF:$("#stageFilter"),
-board:$("#board"),clientBody:$("#clientTableBody"),team:$("#teamGrid"),weekDead:$("#weekDeadlines"),urg:$("#realUrgencies"),blockers:$("#blockerGrid"),metrics:$("#metricsGrid"),archive:$("#archiveGrid"),
-dialog:$("#taskDialog"),detailsDialog: $("#detailsDialog"),detailsBody: $("#detailsBody"),closeDetails: $("#closeDetailsButton"),form:$("#taskForm"),title:$("#dialogTitle"),taskId:$("#taskId"),close:$("#closeDialogButton"),cancel:$("#cancelTaskButton"),del:$("#deleteTaskButton"),
-tipo:$("#tipoDemandaSelect"),resp:$("#responsavelSelect"),rev:$("#revisorSelect"),etapa:$("#etapaSelect"),addClient:$("#addClientTaskButton"),checkin:$("#checkinGrid"),rules:$("#rulesList")
-};
+const dom=const dom = {
+  filterToggle: $("#filterToggleButton"),
+  filterPanel: $("#filterPanel"),
+
+  auth: $("#authScreen"),
+  app: $("#app"),
+  warning: $("#setupWarning"),
+  login: $("#loginForm"),
+  signup: $("#signupButton"),
+  email: $("#emailInput"),
+  pass: $("#passwordInput"),
+  toast: $("#toast"),
+
+  week: $("#weekRange"),
+  updated: $("#updatedDate"),
+  organizer: $("#organizer"),
+  quick: $("#quickStats"),
+  tabs: $("#tabs"),
+  toolbar: $(".toolbar"),
+
+  newBtn: $("#newTaskButton"),
+  refresh: $("#refreshButton"),
+  logout: $("#logoutButton"),
+  search: $("#searchInput"),
+  respF: $("#responsavelFilter"),
+  prioF: $("#priorityFilter"),
+  stageF: $("#stageFilter"),
+
+  board: $("#board"),
+  clientBody: $("#clientTableBody"),
+  team: $("#teamGrid"),
+  weekDead: $("#weekDeadlines"),
+  urg: $("#realUrgencies"),
+  blockers: $("#blockerGrid"),
+  metrics: $("#metricsGrid"),
+  archive: $("#archiveGrid"),
+
+  dialog: $("#taskDialog"),
+  detailsDialog: $("#detailsDialog"),
+  detailsBody: $("#detailsBody"),
+  closeDetails: $("#closeDetailsButton"),
+
+  form: $("#taskForm"),
+  title: $("#dialogTitle"),
+  taskId: $("#taskId"),
+  close: $("#closeDialogButton"),
+  cancel: $("#cancelTaskButton"),
+  del: $("#deleteTaskButton"),
+
+  tipo: $("#tipoDemandaSelect"),
+  resp: $("#responsavelSelect"),
+  rev: $("#revisorSelect"),
+  etapa: $("#etapaSelect"),
+  addClient: $("#addClientTaskButton"),
+  checkin: $("#checkinGrid"),
+  rules: $("#rulesList")
 if (dom.filterToggle && dom.filterPanel) {
   dom.filterToggle.onclick = () => {
     dom.filterPanel.classList.toggle("hidden");
