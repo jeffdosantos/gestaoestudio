@@ -632,3 +632,30 @@ body {
   background: rgba(255,255,255,.10);
   margin: 4px 0;
 }
+.filter-toggle.has-active-filters {
+  background: rgba(220, 38, 38, 0.14);
+  border-color: rgba(220, 38, 38, 0.45);
+  color: #fecaca;
+}
+
+.filter-toggle.has-active-filters:hover {
+  background: rgba(220, 38, 38, 0.22);
+}
+
+.clear-filters-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(220, 38, 38, 0.28);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.clear-filters-x:hover {
+  background: rgba(220, 38, 38, 0.55);
+}
