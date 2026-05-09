@@ -123,3 +123,36 @@
 .delivered .pill-dot {
   background: #16a34a;
 }
+.checklist-box {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #f8fafc;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.check-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
+}
+
+.check-item span {
+  font-size: 15px;
+  color: #334155;
+}
+
+.check-item.done span {
+  text-decoration: line-through;
+  opacity: .6;
+}
