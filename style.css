@@ -359,3 +359,26 @@
     width: calc(100vw - 28px);
   }
 }
+.add-card-btn {
+  width: calc(100% - 24px);
+  margin: 12px;
+  padding: 12px;
+
+  border-radius: 14px;
+  border: 1.5px dashed #cbd5e1;
+
+  background: transparent;
+  color: #64748b;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.add-card-btn:hover {
+  background: #ffffff;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
