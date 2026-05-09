@@ -90,31 +90,20 @@
       <button class="tab" data-tab="regras">📜 Regras</button>
       <button class="tab" data-tab="metricas">📊 Métricas</button>
       <button class="tab" data-tab="arquivo">📦 Arquivo</button>
-    <div class="search-wrap">
-    <span class="search-icon">⌕</span>
-    <input id="searchInput" class="search" type="search" placeholder="Buscar por cliente, projeto, responsável..." />
-  </div>
-<div class="filter-dropdown">
+   <div class="search-wrap">
+  <span class="search-icon">⌕</span>
+  <input id="searchInput" class="search" type="search" placeholder="Buscar por cliente, projeto, responsável..." />
+</div>
 
-  <button id="filterToggleButton"
-          class="btn ghost filter-toggle"
-          type="button">
+<div class="filter-dropdown">
+  <button id="filterToggleButton" class="btn ghost filter-toggle" type="button">
     ☷ Filtros ▾
   </button>
 
   <div id="filterPanel" class="filter-panel hidden">
-
-    <button type="button" class="filter-option" data-quick-filter="">
-      Todos
-    </button>
-
-    <button type="button" class="filter-option" data-quick-filter="today">
-      Hoje
-    </button>
-
-    <button type="button" class="filter-option" data-quick-filter="overdue">
-      Atrasados
-    </button>
+    <button type="button" class="filter-option" data-quick-filter="">Todos</button>
+    <button type="button" class="filter-option" data-quick-filter="today">Hoje</button>
+    <button type="button" class="filter-option" data-quick-filter="overdue">Atrasados</button>
 
     <select id="responsavelFilter">
       <option value="">Todos responsáveis</option>
@@ -127,10 +116,12 @@
       <option value="media">Média</option>
       <option value="baixa">Baixa</option>
     </select>
-     <select id="stageFilter">
-    <option value="">Todas etapas</option>
-  </select>
+
+    <select id="stageFilter">
+      <option value="">Todas etapas</option>
+    </select>
   </div>
+</div>
 </section>
   </div>
     <section class="view active" id="view-kanban">
