@@ -76,7 +76,39 @@
       <button class="tab" data-tab="metricas">📊 Métricas</button>
       <button class="tab" data-tab="arquivo">📦 Arquivo</button>
     </nav>
-    <section class="toolbar">
+    <section class="toolbar minimal-toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input id="searchInput" class="search" type="search" placeholder="Buscar por cliente, projeto, responsável..." />
+  </div>
+
+  <button id="filterToggleButton" class="btn ghost filter-toggle" type="button">
+    ☷ Filtros
+  </button>
+
+  <button id="newTaskButton" class="btn primary">+ Novo card</button>
+
+  <div id="filterPanel" class="filter-panel hidden">
+    <select id="responsavelFilter">
+      <option value="">Todos responsáveis</option>
+    </select>
+
+    <select id="priorityFilter">
+      <option value="">Todas prioridades</option>
+      <option value="urgente">Urgente</option>
+      <option value="alta">Alta</option>
+      <option value="media">Média</option>
+      <option value="baixa">Baixa</option>
+    </select>
+
+    <select id="stageFilter">
+      <option value="">Todas etapas</option>
+    </select>
+
+    <button id="refreshButton" class="btn ghost">Atualizar</button>
+    <button id="logoutButton" class="btn ghost">Sair</button>
+  </div>
+</section>
       <button id="newTaskButton" class="btn primary">+ Novo card</button>
       <input id="searchInput" class="search" type="search" placeholder="Buscar cliente, projeto ou próxima ação..." />
       <select id="responsavelFilter"><option value="">Todos responsáveis</option></select>
