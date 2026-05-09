@@ -90,6 +90,7 @@ if (dom.filterToggle && dom.filterPanel) {
   };
 }
 let supabase=null, session=null, member=null, members=[], tasks=[], channel=null;
+let activeQuickFilter = "";
 const valid=SUPABASE_URL?.startsWith("https://")&&!SUPABASE_URL.includes("SEU-PROJETO")&&SUPABASE_ANON_KEY&&!SUPABASE_ANON_KEY.includes("SUA_CHAVE");
 if(valid) supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY); else dom.warning.classList.remove("hidden");
 
@@ -110,7 +111,46 @@ function overdue(t){let p=date(t.prazo), n=date(today()); return !!(p&&p<n&&!isD
 function dueThisWeek(t){let p=date(t.prazo); if(!p)return false; let s=startWeek(), e=addDays(s,6); return p>=s&&p<=e}
 function statusFromStage(s){return ({revisao:"revisao_interna",enviado_cliente:"aguardando_cliente",bloqueado:"bloqueado",aprovado:"aprovado",entregue:"entregue"})[s]||"em_andamento"}
 function toast(msg,type=""){dom.toast.textContent=msg;dom.toast.style.background=type==="error"?"#991b1b":"#111827";dom.toast.classList.add("show");setTimeout(()=>dom.toast.classList.remove("show"),3000)}
-function filtered(){let q=dom.search.value.toLowerCase().trim(),r=dom.respF.value,p=dom.prioF.value,s=dom.stageF.value;return tasks.filter(t=>(!q||[t.cliente,t.titulo,t.proxima_acao,t.tipo_demanda].join(" ").toLowerCase().includes(q))&&(!r||t.responsavel_id===r)&&(!p||t.prioridade===p)&&(!s||t.etapa===s))}
+function filtered() {
+  const q = dom.search.value.toLowerCase().trim();
+  const r = dom.respF.value;
+  const p = dom.prioF.value;
+  const s = dom.stageF.value;
+
+  return tasks.filter(t => {
+    const searchText = [
+      t.cliente,
+      t.titulo,
+      t.proxima_acao,
+      t.tipo_demanda,
+      t.observacoes,
+      memberName(t.responsavel_id)
+    ].join(" ").toLowerCase();
+
+    const matchesSearch = !q || searchText.includes(q);
+    const matchesResponsible = !r || t.responsavel_id === r;
+    const matchesPriority = !p || t.prioridade === p;
+    const matchesStage = !s || t.etapa === s;
+
+    let matchesQuick = true;
+
+    if (activeQuickFilter === "today") {
+      matchesQuick = t.prazo === today();
+    }
+
+    if (activeQuickFilter === "overdue") {
+      matchesQuick = overdue(t);
+    }
+
+    return (
+      matchesSearch &&
+      matchesResponsible &&
+      matchesPriority &&
+      matchesStage &&
+      matchesQuick
+    );
+  });
+}
 function fillSelects(){dom.tipo.innerHTML="<option value=''>Selecione</option>"+DEMAND_TYPES.map(x=>`<option>${esc(x)}</option>`).join(""); let stages=COLUMNS.map(c=>`<option value="${c.id}">${esc(c.title)}</option>`).join(""); dom.etapa.innerHTML=stages; dom.stageF.innerHTML="<option value=''>Todas etapas</option>"+stages}
 function fillMembers(){let opts="<option value=''>Sem responsável</option>"+members.map(m=>`<option value="${m.id}">${esc(m.nome)}</option>`).join(""); dom.resp.innerHTML=opts;dom.rev.innerHTML=opts.replace("Sem responsável","Sem revisor");dom.respF.innerHTML="<option value=''>Todos responsáveis</option>"+members.map(m=>`<option value="${m.id}">${esc(m.nome)}</option>`).join("")}
 function showAuth(){dom.auth.classList.remove("hidden");dom.app.classList.add("hidden")}
@@ -496,7 +536,23 @@ async function saveTask(e){
 }
 async function deleteTask(){let id=dom.taskId.value;if(!id||!confirm("Excluir este card?"))return;let {error}=await supabase.from("tasks").delete().eq("id",id);if(error)return toast(error.message,"error");dom.dialog.close();await loadTasks()}
 dom.tabs.onclick=e=>{let b=e.target.closest(".tab");if(!b)return;$$(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");$$(".view").forEach(v=>v.classList.remove("active"));$(`#view-${b.dataset.tab}`).classList.add("active");dom.toolbar.style.display=b.dataset.tab==="kanban"||b.dataset.tab==="clientes"?"flex":"none"}
-dom.newBtn.onclick=()=>openTask();dom.addClient.onclick=()=>openTask();dom.close.onclick=()=>dom.dialog.close();dom.cancel.onclick=()=>dom.dialog.close();dom.del.onclick=deleteTask;dom.form.onsubmit=saveTask;[dom.search,dom.respF,dom.prioF,dom.stageF].forEach(el=>el.oninput=renderAll);dom.refresh.onclick=()=>loadTasks();dom.logout.onclick=async()=>{await supabase.auth.signOut();showAuth()}
+dom.newBtn.onclick=()=>openTask();dom.addClient.onclick=()=>openTask();dom.close.onclick=()=>dom.dialog.close();dom.cancel.onclick=()=>dom.dialog.close();dom.del.onclick=deleteTask;dom.form.onsubmit=saveTask;[dom.search,dom.respF,dom.prioF,dom.stageF].forEach(el=>el.oninput=renderAll);dom.quickFilterButtons.forEach(button => {
+  button.onclick = () => {
+    activeQuickFilter = button.dataset.quickFilter || "";
+
+    dom.quickFilterButtons.forEach(btn => {
+      btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    if (dom.filterPanel) {
+      dom.filterPanel.classList.add("hidden");
+    }
+
+    renderAll();
+  };
+});dom.refresh.onclick=()=>loadTasks();dom.logout.onclick=async()=>{await supabase.auth.signOut();showAuth()}
 dom.login.onsubmit=async e=>{e.preventDefault();if(!supabase)return toast("Configure o Supabase primeiro.","error");let {data,error}=await supabase.auth.signInWithPassword({email:dom.email.value,password:dom.pass.value});if(error)return toast(error.message,"error");start(data.session)}
 dom.signup.onclick=async()=>{if(!supabase)return toast("Configure o Supabase primeiro.","error");let {error}=await supabase.auth.signUp({email:dom.email.value,password:dom.pass.value});toast(error?error.message:"Acesso criado. Confirme o e-mail se o Supabase solicitar.",error?"error":"")}
 fillSelects(); if(valid){supabase.auth.getSession().then(({data})=>data.session?start(data.session):showAuth());supabase.auth.onAuthStateChange((_e,s)=>{if(s&&!session)start(s)})}else showAuth();
