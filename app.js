@@ -2,17 +2,17 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
 
 const COLUMNS=[
-["entrada","A Entrada / Nova Demanda","#71839b","Arraste um card aqui"],
-["triagem","B Triagem / Organização","#de8500","Arraste um card aqui"],
-["briefing","C Briefing / Informações Pendentes","#d89a00",""],
-["planejamento","D Planejamento / Fila de Produção","#3b82f6",""],
-["criacao","E Criação / Design em Andamento","#1d4ed8","máx. 2 por designer"],
-["revisao","F Revisão Interna","#7c3aed",""],
-["enviado_cliente","G Enviado ao Cliente","#64748b",""],
-["ajustes","H Ajustes Solicitados","#f97316",""],
-["aprovado","I Aprovado / Preparar Entrega","#16a34a",""],
-["entregue","J Entregue / Finalizado","#15803d",""],
-["bloqueado","K Bloqueado / Problemas","#dc2626",""]
+["entrada","(1) Entrada / Nova Demanda","#71839b","Arraste um card aqui"],
+["triagem","(2) Triagem / Organização","#de8500","Arraste um card aqui"],
+["briefing","(3) Briefing / Informações Pendentes","#d89a00",""],
+["planejamento","(4) Planejamento / Fila de Produção","#3b82f6",""],
+["criacao","(5) Criação / Design em Andamento","#1d4ed8","máx. 2 por designer"],
+["revisao","(6) Revisão Interna","#7c3aed",""],
+["enviado_cliente","(7) Enviado ao Cliente","#64748b",""],
+["ajustes","(8) Ajustes Solicitados","#f97316",""],
+["aprovado","(9) Aprovado / Preparar Entrega","#16a34a",""],
+["entregue","(10) Entregue / Finalizado","#15803d",""],
+["bloqueado","(11) Bloqueado / Problemas","#dc2626",""]
 ].map(([id,title,color,help])=>({id,title,color,help}));
 const DEMAND_TYPES=["Identidade visual","Social media","Post avulso","Carrossel","Campanha","Landing page","Site","Apresentação","Impressos","Motion / vídeo","Embalagem","Edição de imagem","Peça urgente","Ajuste simples","Projeto estratégico"];
 const STATUS={em_andamento:"Em andamento",revisao_interna:"Em revisão",aguardando_cliente:"Aguardando cliente",bloqueado:"Bloqueado",aprovado:"Aprovado",entregue:"Entregue"};
