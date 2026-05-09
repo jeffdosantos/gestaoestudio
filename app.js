@@ -17,6 +17,21 @@ const COLUMNS=[
 const DEMAND_TYPES=["Identidade visual","Social media","Post avulso","Carrossel","Campanha","Landing page","Site","Apresentação","Impressos","Motion / vídeo","Embalagem","Edição de imagem","Peça urgente","Ajuste simples","Projeto estratégico"];
 const STATUS={em_andamento:"Em andamento",revisao_interna:"Em revisão",aguardando_cliente:"Aguardando cliente",bloqueado:"Bloqueado",aprovado:"Aprovado",entregue:"Entregue"};
 const PRIORITY={urgente:"Urgente",alta:"Alta",media:"Média",baixa:"Baixa"};
+const DEFAULT_CHECKLIST = [
+  "Briefing recebido",
+  "Referências recebidas",
+  "Textos recebidos",
+  "Arquivos/materiais recebidos",
+  "Prazo definido",
+  "Responsável definido",
+  "Primeira versão criada",
+  "Revisão interna feita",
+  "Enviado ao cliente",
+  "Ajustes registrados",
+  "Aprovado",
+  "Arquivos finais entregues",
+  "Cliente confirmado"
+];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const dom={
 auth:$("#authScreen"),app:$("#app"),warning:$("#setupWarning"),login:$("#loginForm"),signup:$("#signupButton"),email:$("#emailInput"),pass:$("#passwordInput"),toast:$("#toast"),
@@ -77,6 +92,30 @@ function renderBlockers(){let list=tasks.filter(t=>isBlocked(t)&&!isDone(t));dom
 function renderMetrics(){let newWeek=tasks.filter(t=>date(t.data_entrada)>=startWeek()).length, delivered=tasks.filter(t=>isDone(t)&&dueThisWeek(t)).length, late=tasks.filter(overdue).length, blocked=tasks.filter(isBlocked).length, waiting=tasks.filter(t=>t.status==="aguardando_cliente"||t.etapa==="enviado_cliente").length;let counts=Object.fromEntries(members.map(m=>[m.id,tasks.filter(t=>t.responsavel_id===m.id&&!isDone(t)).length]));let top=members.sort((a,b)=>(counts[b.id]||0)-(counts[a.id]||0))[0];let cards=[["📥",newWeek,"Demandas novas na semana"],["📦",delivered,"Demandas entregues"],["⚠️",late,"Demandas atrasadas"],["🔒",blocked,"Cards bloqueados"],["⏳",waiting,"Cards aguardando cliente"]];dom.metrics.innerHTML=cards.map(([i,n,l])=>`<div class="metric-card"><div class="icon">${i}</div><strong>${n}</strong><span>${l}</span></div>`).join("")+`<div class="metric-card" style="grid-column:span 2"><span>👤 Pessoa com mais demandas</span><p>${esc(top?.nome||"—")} (${top?counts[top.id]:0} demandas)</p></div><div class="metric-card" style="grid-column:span 3"><span>🚧 Principal gargalo da semana</span><p>${waiting?"Aguardando retorno de clientes":blocked?"Bloqueios internos":"Fluxo sem gargalo crítico"}</p></div>`}
 function renderArchive(){let done=tasks.filter(isDone);dom.archive.innerHTML=done.length?done.map(t=>`<div class="archive-card"><h3>${esc(t.titulo)}</h3><p>${esc(t.cliente)} • ${esc(memberName(t.responsavel_id))}</p><span class="pill green">Entregue</span></div>`).join(""):"<div class='info-card'>Nenhum card entregue ainda.</div>"}
 function renderStatic(){dom.checkin.innerHTML=["O que entrou de novo?","O que está atrasado ou em risco?","O que está bloqueado?","Quem está sobrecarregado?","O que precisa ser entregue hoje?","Quais cards precisam mudar de etapa?"].map((x,i)=>`<div class="info-card"><h3>${i+1}. ${x}</h3><p class="muted">Atualize o quadro durante a reunião, não depois.</p></div>`).join("");let rules=["Nenhuma demanda deve ficar apenas na conversa; toda demanda vira card.","Todo card precisa ter responsável, prazo e próxima ação.","Se não tem briefing suficiente, não vai para criação.","Se está aguardando cliente, registrar a data do envio.","Se está bloqueado, precisa ter motivo e responsável por destravar.","Não iniciar novas tarefas se há muitas tarefas paradas em revisão, ajustes ou entrega.","Toda alteração solicitada pelo cliente deve ser registrada no card.","Cards atrasados devem ser marcados com alerta visual.","Ao final da semana, revisar cards concluídos e arquivar.","O quadro deve ser atualizado diariamente pela equipe."];dom.rules.innerHTML=rules.map(r=>`<li>${esc(r)}</li>`).join("")}
+function renderChecklist(list = []) {
+  const box = $("#checklistContainer");
+
+  if (!box) return;
+
+  const items = list.length
+    ? list
+    : DEFAULT_CHECKLIST.map(text => ({
+        text,
+        done: false
+      }));
+
+  box.innerHTML = items.map((item, index) => `
+    <label class="check-item ${item.done ? "done" : ""}">
+      <input
+        type="checkbox"
+        data-check="${index}"
+        ${item.done ? "checked" : ""}
+      />
+
+      <span>${esc(item.text)}</span>
+    </label>
+  `).join("");
+}
 function openTask(t=null){dom.form.reset();dom.del.style.display=t?"inline-flex":"none";dom.title.textContent=t?"Editar card":"Novo card";dom.taskId.value=t?.id||"";if(t){Object.entries(t).forEach(([k,v])=>{let f=dom.form.elements[k];if(!f)return;if(f.type==="checkbox")f.checked=!!v;else f.value=v??""})}else{dom.form.elements.data_entrada.value=today();dom.form.elements.etapa.value="entrada"}dom.dialog.showModal()}
 async function saveTask(e){e.preventDefault();let fd=new FormData(dom.form), id=fd.get("id");let payload={cliente:fd.get("cliente"),titulo:fd.get("titulo"),tipo_demanda:fd.get("tipo_demanda")||null,responsavel_id:fd.get("responsavel_id")||null,revisor_id:fd.get("revisor_id")||null,prioridade:fd.get("prioridade")||"media",prazo:fd.get("prazo")||null,data_entrada:fd.get("data_entrada")||today(),etapa:fd.get("etapa")||"entrada",status:fd.get("status")||"em_andamento",canal_solicitacao:fd.get("canal_solicitacao")||null,proxima_acao:fd.get("proxima_acao")||null,link_briefing:fd.get("link_briefing")||null,link_arquivos:fd.get("link_arquivos")||null,link_figma_drive:fd.get("link_figma_drive")||null,bloqueado:fd.get("bloqueado")==="on",motivo_bloqueio:fd.get("motivo_bloqueio")||null,observacoes:fd.get("observacoes")||null,updated_by:session?.user?.email||null};let res=id?await supabase.from("tasks").update(payload).eq("id",id):await supabase.from("tasks").insert(payload);if(res.error)return toast(res.error.message,"error");dom.dialog.close();await loadTasks();toast("Card salvo.")}
 async function deleteTask(){let id=dom.taskId.value;if(!id||!confirm("Excluir este card?"))return;let {error}=await supabase.from("tasks").delete().eq("id",id);if(error)return toast(error.message,"error");dom.dialog.close();await loadTasks()}
