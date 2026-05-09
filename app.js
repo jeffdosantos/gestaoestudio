@@ -98,32 +98,61 @@ if (dom.filterToggle && dom.filterPanel) {
     dom.filterPanel.classList.add("hidden");
   });
 }
+function hasActiveFilters() {
+  return (
+    !!dom.respF?.value ||
+    !!dom.prioF?.value ||
+    !!dom.stageF?.value ||
+    !!activeQuickFilter
+  );
+}
+
 function updateFilterButtonLabel() {
-  const labels = [];
+  if (!dom.filterToggle) return;
 
-  if (dom.respF?.value) {
-    labels.push(memberName(dom.respF.value));
+  dom.filterToggle.innerHTML = hasActiveFilters()
+    ? `☷ Filtros ativos <span class="clear-filters-x" title="Limpar filtros">×</span>`
+    : `☷ Filtros ▾`;
+
+  dom.filterToggle.classList.toggle("has-active-filters", hasActiveFilters());
+}
+function clearAllFilters() {
+  activeQuickFilter = "";
+
+  if (dom.respF) dom.respF.value = "";
+  if (dom.prioF) dom.prioF.value = "";
+  if (dom.stageF) dom.stageF.value = "";
+
+  dom.quickFilterButtons?.forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  updateFilterButtonLabel();
+  renderAll();
+
+  if (dom.filterPanel) {
+    dom.filterPanel.classList.add("hidden");
   }
+}
+if (dom.filterToggle && dom.filterPanel) {
+  dom.filterToggle.onclick = (e) => {
+    e.stopPropagation();
 
-  if (dom.prioF?.value) {
-    labels.push(PRIORITY[dom.prioF.value] || dom.prioF.value);
-  }
+    if (e.target.closest(".clear-filters-x")) {
+      clearAllFilters();
+      return;
+    }
 
-  if (dom.stageF?.value) {
-    labels.push(stageLabel(dom.stageF.value));
-  }
+    dom.filterPanel.classList.toggle("hidden");
+  };
 
-  if (activeQuickFilter === "today") {
-    labels.push("Hoje");
-  }
+  dom.filterPanel.onclick = (e) => {
+    e.stopPropagation();
+  };
 
-  if (activeQuickFilter === "overdue") {
-    labels.push("Atrasados");
-  }
-
-  dom.filterToggle.textContent = labels.length
-    ? `Filtros: ${labels.join(" + ")} ▾`
-    : "☷ Filtros ▾";
+  document.addEventListener("click", () => {
+    dom.filterPanel.classList.add("hidden");
+  });
 }
 let supabase=null, session=null, member=null, members=[], tasks=[], channel=null;
 let activeQuickFilter = "";
