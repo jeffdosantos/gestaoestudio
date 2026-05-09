@@ -100,7 +100,13 @@
     <section class="view" id="view-metricas"><div class="section-head"><div><h2>Indicadores do Fluxo</h2><p>Esses indicadores ajudam a perceber acúmulos, atrasos e sobrecarga antes que virem problema.</p></div><button class="btn ghost">✎ Editar indicadores</button></div><div id="metricsGrid" class="metrics-grid"></div><div class="note">💡 Atualize esses indicadores semanalmente durante o check-in da equipe. Eles ajudam a visualizar padrões e tomar decisões antes que os problemas escalem.</div></section>
     <section class="view" id="view-arquivo"><div class="section-head"><div><h2>Arquivo / Concluídos do Mês</h2><p>Cards entregues e conferidos ficam aqui.</p></div></div><div id="archiveGrid" class="list-grid"></div></section>
   </main>
-  
+  <dialog id="detailsDialog" class="details-modal">
+  <div class="details-content">
+    <button type="button" id="closeDetailsButton" class="details-close">×</button>
+
+    <div id="detailsBody"></div>
+  </div>
+</dialog>
   <dialog id="taskDialog" class="modal">
     <form id="taskForm" method="dialog">
       <div class="modal-head"><div><small>Card de demanda</small><h2 id="dialogTitle">Novo card</h2></div><button type="button" id="closeDialogButton" class="icon-btn">×</button></div>
