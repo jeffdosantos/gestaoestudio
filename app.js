@@ -79,7 +79,11 @@ function subscribe(){if(channel)supabase.removeChannel(channel);channel=supabase
 function renderAll(){renderDates();renderQuick();renderBoard();renderClients();renderTeam();renderDeadlines();renderBlockers();renderMetrics();renderArchive();renderStatic()}
 function renderDates(){let s=startWeek(),e=addDays(s,4),f=new Intl.DateTimeFormat("pt-BR",{day:"2-digit",month:"2-digit"});dom.week.textContent=`${f.format(s)} – ${f.format(e)}/${e.getFullYear()}`;dom.updated.textContent=new Intl.DateTimeFormat("pt-BR").format(new Date())}
 function renderQuick(){let active=tasks.filter(t=>!isDone(t)).length, creation=tasks.filter(t=>t.etapa==="criacao").length, blocked=tasks.filter(isBlocked).length, wait=tasks.filter(t=>t.status==="aguardando_cliente"||t.etapa==="enviado_cliente").length;dom.quick.innerHTML=[["mini-blue",active,"Cards ativos"],["mini-purple",creation,"Em criação"],["mini-red",blocked,"Bloqueados"],["mini-grey",wait,"Aguard. cliente"]].map(([c,n,l])=>`<div class="mini-stat ${c}"><strong>${n}</strong>${l}</div>`).join("")}
-function renderBoard(){let fs=filtered();dom.board.innerHTML=COLUMNS.map(c=>{let list=fs.filter(t=>t.etapa===c.id);return `<section class="column" data-stage="${c.id}"><header class="column-head" style="background:${c.color}"><span>${esc(c.title)}</span><span class="count">${list.length}</span></header><div class="column-body">${list.length?list.map(card).join(""):`<div class="empty-drop">${esc(c.help||"Arraste um card aqui")}</div>`}</div></section>`}).join("");attachDrag()}
+function renderBoard(){let fs=filtered();dom.board.innerHTML=COLUMNS.map(c=>{let list=fs.filter(t=>t.etapa===c.id);return `<section class="column" data-stage="${c.id}"><header class="column-head" style="background:${c.color}"><span>${esc(c.title)}</span><span class="count">${list.length}</span></header><div class="column-body">${list.length?list.map(card).join(""):`<div class="empty-drop">${esc(c.help||"Arraste um card aqui")}</div>`}</div><button class="add-card-btn" data-add-stage="${c.id}">
+  ＋ Adicionar card
+</button>
+</section>
+`}).join("");attachDrag()}
 function card(t){let chk=Array.isArray(t.checklist)?t.checklist:[],done=chk.filter(i=>i.done||i.concluido).length,total=chk.length||13,doneN=chk.length?done:Math.min(6,total), pct=Math.round(doneN/total*100);let m=memberById(t.responsavel_id);return `<article class="task-card priority-${esc(t.prioridade||"media")} ${overdue(t)?"overdue":""} ${isBlocked(t)?"blocked":""}" draggable="true" data-id="${t.id}">
 <div class="card-top"><div><span class="tag ${esc(t.prioridade||"media")}">● ${PRIORITY[t.prioridade]||"Média"}</span></div><button class="card-menu" data-edit="${t.id}">✎</button></div>
 <p class="client-name">${esc(t.cliente)}</p><h3 class="task-title">${esc(t.titulo)}</h3>
@@ -100,7 +104,17 @@ $$("[data-edit]").forEach(b => {
     openTask(tasks.find(t => t.id === b.dataset.edit));
   };
 });
-$$(".column").forEach(col=>{col.ondragover=e=>e.preventDefault();col.ondrop=async e=>{e.preventDefault();let id=e.dataTransfer.getData("text/plain"),etapa=col.dataset.stage;await moveTask(id,etapa)}})}
+$$(".column").forEach(col=>{col.ondragover=e=>e.preventDefault();col.ondrop=async e=>{e.preventDefault();let id=e.dataTransfer.getData("text/plain"),etapa=col.dataset.stage;await moveTask(id,etapa)}})}$$("[data-add-stage]").forEach(btn => {
+  btn.onclick = () => {
+    openTask();
+
+    setTimeout(() => {
+      if (dom.form?.elements?.etapa) {
+        dom.form.elements.etapa.value = btn.dataset.addStage;
+      }
+    }, 50);
+  };
+});
 async function moveTask(id,etapa){let patch={etapa,status:statusFromStage(etapa),updated_by:session?.user?.email||null,bloqueado:etapa==="bloqueado"};let {error}=await supabase.from("tasks").update(patch).eq("id",id);if(error)return toast(error.message,"error");tasks=tasks.map(t=>t.id===id?{...t,...patch}:t);renderAll()}
 function renderClients(){dom.clientBody.innerHTML=filtered().filter(t=>!isDone(t)).map(t=>`<tr><td>${esc(t.cliente)}</td><td>${esc(t.titulo)}</td><td><span class="pill blue">${esc(memberName(t.responsavel_id))}</span></td><td>${esc(stageLabel(t.etapa))}</td><td>🗓️ ${fmt(t.prazo)}</td><td><span class="pill ${esc(t.prioridade||"media")}">● ${PRIORITY[t.prioridade]||"Média"}</span></td><td><span class="pill ${t.status==="revisao_interna"?"purple":t.status==="aguardando_cliente"?"grey":t.status==="bloqueado"?"red":t.status==="aprovado"?"green":"blue"}">${STATUS[t.status]||"Em andamento"}</span></td><td>→ ${esc(t.proxima_acao||"—")}</td><td><button class="card-menu" data-edit="${t.id}">✎</button></td></tr>`).join("");$$("[data-edit]").forEach(b=>b.onclick=()=>openTask(tasks.find(t=>t.id===b.dataset.edit)))}
 function renderTeam(){dom.team.innerHTML=members.map(m=>{let mine=tasks.filter(t=>t.responsavel_id===m.id&&!isDone(t)),doing=mine.filter(t=>["criacao","revisao","ajustes"].includes(t.etapa)).length,cap=Math.min(100,doing/4*100);return `<div class="team-card" style="--member:${esc(m.cor||"#2563eb")}"><div class="team-avatar">♙</div><h3>${esc(m.nome)}</h3><p class="muted">${esc(m.funcao||"Designer")}</p><div class="team-row"><span>Demandas ativas</span><span class="pill blue">${mine.length}</span></div><div class="team-row"><span>Cards em andamento</span><span class="pill grey">${doing}/4</span></div><p class="muted">Capacidade da semana</p><div class="capacity"><span style="width:${cap}%"></span></div><p class="muted">Observações<br>—</p></div>`}).join("")}
