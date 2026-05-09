@@ -42,3 +42,66 @@
   content-visibility: auto;
   contain-intrinsic-size: 800px;
 }
+.view-toggle {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.view-toggle-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: transparent;
+  color: #64748b;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-toggle-btn.active {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+/* VISÃO GERAL / COMPACTA */
+body.overview-mode .kanban-board,
+body.overview-mode .board {
+  gap: 10px;
+}
+
+body.overview-mode .kanban-column,
+body.overview-mode .column {
+  min-width: 210px;
+  width: 210px;
+}
+
+body.overview-mode .kanban-card,
+body.overview-mode .task-card {
+  padding: 10px;
+  border-radius: 14px;
+  gap: 6px;
+}
+
+body.overview-mode .kanban-card .description,
+body.overview-mode .kanban-card .checklist,
+body.overview-mode .kanban-card .links,
+body.overview-mode .task-card .card-detail,
+body.overview-mode .task-card .card-links {
+  display: none !important;
+}
+
+body.overview-mode .kanban-card h3,
+body.overview-mode .task-card h3 {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+body.overview-mode .tag,
+body.overview-mode .badge {
+  font-size: 10px;
+  padding: 3px 6px;
+}
