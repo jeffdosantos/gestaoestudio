@@ -551,3 +551,26 @@
 .board-scroll {
   scroll-behavior: smooth;
 }
+html,
+body {
+  overflow-x: hidden !important;
+}
+
+.view.active {
+  overflow-x: hidden !important;
+}
+
+#view-kanban {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+}
+
+.board {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: none;
+}
