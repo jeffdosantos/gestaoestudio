@@ -123,3 +123,7 @@
 .delivered .pill-dot {
   background: #16a34a;
 }
+.legend-card {
+  margin-top: 18px;
+  opacity: .92;
+}
