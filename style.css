@@ -1109,3 +1109,18 @@ body {
     overflow-y: auto !important;
   }
 }
+.details-footer-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn.success {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.btn.success:hover {
+  background: #bbf7d0;
+}
