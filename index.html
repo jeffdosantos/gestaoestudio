@@ -54,6 +54,9 @@
     </span>
   </div>
   <span id="organizer" style="display:none"></span>
+  <button id="manageColumnsButton" class="btn ghost" type="button">
+  ⚙ Configurar etapas
+</button>
 </div>
 </div>
     </header>
@@ -141,7 +144,26 @@
         <input name="nome" required placeholder="Ex: Luh Studio" />
       </label>
     </div>
+<dialog id="columnsDialog" class="modal">
+  <form id="columnsForm" method="dialog">
+    <div class="modal-head">
+      <div>
+        <small>Fluxo do Kanban</small>
+        <h2>Configurar etapas</h2>
+      </div>
+      <button type="button" id="closeColumnsButton" class="icon-btn">×</button>
+    </div>
 
+    <div id="columnsManager" class="columns-manager"></div>
+
+    <div class="modal-actions">
+      <button type="button" id="addColumnButton" class="btn ghost">+ Nova etapa</button>
+      <span></span>
+      <button type="button" id="cancelColumnsButton" class="btn ghost">Cancelar</button>
+      <button type="submit" class="btn primary">Salvar etapas</button>
+    </div>
+  </form>
+</dialog>
     <div class="modal-actions">
       <span></span>
       <button type="button" id="cancelClientButton" class="btn ghost">Cancelar</button>

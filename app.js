@@ -1,7 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
 
-const COLUMNS=[
+let COLUMNS = [];
 ["entrada","(1) Entrada / Nova Demanda","#71839b","Arraste um card aqui"],
 ["triagem","(2) Triagem / Organização","#de8500","Arraste um card aqui"],
 ["briefing","(3) Briefing","#d89a00",""],
@@ -34,6 +34,7 @@ const DEFAULT_CHECKLIST = [
 ];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const dom = {
+manageColumns: $("#manageColumnsButton"),
 clientDialog: $("#clientDialog"),
 clientForm: $("#clientForm"),
 closeClient: $("#closeClientDialogButton"),
@@ -90,6 +91,9 @@ clienteSelect: $("#clienteSelect"),
   checkin: $("#checkinGrid"),
   rules: $("#rulesList")
 };
+dom.manageColumns.onclick = openColumnsManager;
+dom.closeColumns.onclick = () => dom.columnsDialog.close();
+dom.cancelColumns.onclick = () => dom.columnsDialog.close();
 if (dom.filterToggle && dom.filterPanel) {
   dom.filterToggle.onclick = (e) => {
     e.stopPropagation();
@@ -103,6 +107,24 @@ if (dom.filterToggle && dom.filterPanel) {
   document.addEventListener("click", () => {
     dom.filterPanel.classList.add("hidden");
   });
+}
+async function loadColumns() {
+  const { data, error } = await supabase
+    .from("workflow_columns")
+    .select("*")
+    .eq("active", true)
+    .order("position", { ascending: true });
+
+  if (error) throw error;
+
+  COLUMNS = (data || []).map(c => ({
+    id: c.slug,
+    title: c.title,
+    color: c.color,
+    help: c.help
+  }));
+
+  fillSelects();
 }
 function hasActiveFilters() {
   return (
@@ -230,10 +252,46 @@ if (alreadyExists) {
 
 await loadMembers();
 await loadClients();
+await loadColumns();
 await loadTasks();
 
   toast("Cliente cadastrado.");
 }
+async function saveColumns(e) {
+  e.preventDefault();
+
+  const rows = [...document.querySelectorAll(".column-config-row")];
+
+  for (const row of rows) {
+    const id = row.dataset.columnId;
+
+    const payload = {
+      title: row.querySelector('[name="title"]').value.trim(),
+      color: row.querySelector('[name="color"]').value,
+      position: Number(row.querySelector('[name="position"]').value),
+      active: row.querySelector('[name="active"]').checked
+    };
+
+    const { error } = await supabase
+      .from("workflow_columns")
+      .update(payload)
+      .eq("id", id);
+
+    if (error) {
+      toast(error.message, "error");
+      return;
+    }
+  }
+
+  dom.columnsDialog.close();
+
+  await loadColumns();
+  await loadTasks();
+
+  toast("Etapas atualizadas.");
+}
+
+dom.columnsForm.onsubmit = saveColumns;
 function esc(v=""){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function today(){let d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
 function date(v){if(!v)return null;let [y,m,d]=v.split("-").map(Number);return new Date(y,m-1,d)}
@@ -327,6 +385,31 @@ function enableBoardMouseScroll() {
     },
     { passive: false }
   );
+}
+async function openColumnsManager() {
+  const { data, error } = await supabase
+    .from("workflow_columns")
+    .select("*")
+    .order("position", { ascending: true });
+
+  if (error) {
+    toast(error.message, "error");
+    return;
+  }
+
+  dom.columnsManager.innerHTML = data.map(c => `
+    <div class="column-config-row" data-column-id="${c.id}">
+      <input name="title" value="${esc(c.title)}" placeholder="Nome da etapa" />
+      <input name="color" value="${esc(c.color)}" type="color" />
+      <input name="position" value="${c.position}" type="number" />
+      <label class="check">
+        <input name="active" type="checkbox" ${c.active ? "checked" : ""} />
+        Ativa
+      </label>
+    </div>
+  `).join("");
+
+  dom.columnsDialog.showModal();
 }
 function renderBoard(){
   let fs = filtered();
