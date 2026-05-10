@@ -392,37 +392,38 @@ async function openColumnsManager() {
 
   dom.columnsManager.innerHTML = data.map(c => `
     <div class="column-config-row" data-column-id="${c.id}">
-      <input name="title" value="${esc(c.title)}" placeholder="Nome da etapa" />
-      <input name="color" value="${esc(c.color)}" type="color" />
-  <div class="column-config-main">
-    <input
-      name="title"
-      value="${esc(c.title)}"
-      placeholder="Nome da etapa"
-    />
+      <div class="column-config-main">
+        <input
+          name="title"
+          value="${esc(c.title)}"
+          placeholder="Nome da etapa"
+        />
 
-    <input
-      name="color"
-      value="${esc(c.color)}"
-      type="color"
-    />
-  </div>
+        <input
+          name="color"
+          value="${esc(c.color)}"
+          type="color"
+        />
+      </div>
 
-  <div class="column-config-actions">
-    <button type="button" class="move-up">↑</button>
-    <button type="button" class="move-down">↓</button>
+      <div class="column-config-actions">
+        <button type="button" class="move-up">↑</button>
+        <button type="button" class="move-down">↓</button>
 
-    <label class="check">
-      <input
-        name="active"
-        type="checkbox"
-        ${c.active ? "checked" : ""}
-      />
-      Ativa
-    </label>
+        <label class="check">
+          <input
+            name="active"
+            type="checkbox"
+            ${c.active ? "checked" : ""}
+          />
+          Ativa
+        </label>
+      </div>
     </div>
   `).join("");
-   bindColumnReorder();
+
+  bindColumnReorder();
+
   dom.columnsDialog.showModal();
 }
 function bindColumnReorder() {
