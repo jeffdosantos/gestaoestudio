@@ -493,8 +493,8 @@ function card(t) {
   let pct = Math.round(doneN / total * 100);
   let m = memberById(t.responsavel_id);
   let clienteNome = clientName(t.cliente_id, t.cliente || "Sem cliente");
-
-  return `<article class="task-card priority-${esc(t.prioridade || "media")} ${overdue(t) ? "overdue" : ""} ${isBlocked(t) ? "blocked" : ""}" draggable="${!window.matchMedia("(max-width: 760px)").matches}">
+  return `<article class="task-card priority-${esc(t.prioridade || "media")} ${overdue(t) ? "overdue" : ""} ${isBlocked(t) ? "blocked" : ""}"draggable="${!window.matchMedia("(max-width: 760px)").matches}" 
+  data-id="${esc(t.id)}">
     <div class="card-top">
       <div><span class="tag ${esc(t.prioridade || "media")}">● ${PRIORITY[t.prioridade] || "Média"}</span></div>
       <button class="card-menu" data-edit="${t.id}">✎</button>
@@ -525,7 +525,9 @@ function attachDrag() {
 
     el.addEventListener("dragstart", e => {
       el.classList.add("dragging");
-      e.dataTransfer.setData("text/plain", el.dataset.id);
+      if (!el.dataset.id) return;
+
+e.dataTransfer.setData("text/plain", el.dataset.id);
     });
 
     el.addEventListener("dragend", () => {
@@ -569,14 +571,40 @@ function attachDrag() {
 
       e.preventDefault();
 
-      let id = e.dataTransfer.getData("text/plain");
+let id = e.dataTransfer.getData("text/plain");
+let etapa = col.dataset.stage;
 
-      let etapa = col.dataset.stage;
+if (!id || id === "undefined") {
+  toast("Não foi possível identificar o card.", "error");
+  return;
+}
 
-      await moveTask(id, etapa);
-
+await moveTask(id, etapa);
     };
+async function moveTask(id, etapa) {
+  if (!id || id === "undefined") {
+    toast("Card inválido.", "error");
+    return;
+  }
 
+  let patch = {
+    etapa,
+    status: statusFromStage(etapa),
+    updated_by: session?.user?.email || null,
+    bloqueado: etapa === "bloqueado"
+  };
+
+  let { error } = await supabase
+    .from("tasks")
+    .update(patch)
+    .eq("id", id);
+
+  if (error) return toast(error.message, "error");
+
+  tasks = tasks.map(t => t.id === id ? { ...t, ...patch } : t);
+
+  renderAll();
+}
   });
 
   $$("[data-add-stage]").forEach(btn => {
