@@ -257,13 +257,13 @@ async function saveColumns(e) {
 
   const rows = [...document.querySelectorAll(".column-config-row")];
 
-  for (const row of rows) {
-    const id = row.dataset.columnId;
+for (const [index, row] of rows.entries()) {
+  const id = row.dataset.columnId;
 
     const payload = {
       title: row.querySelector('[name="title"]').value.trim(),
       color: row.querySelector('[name="color"]').value,
-      position: Number(row.querySelector('[name="position"]').value),
+      position: index + 1,
       active: row.querySelector('[name="active"]').checked
     };
 
@@ -394,6 +394,7 @@ async function openColumnsManager() {
     <div class="column-config-row" data-column-id="${c.id}">
       <input name="title" value="${esc(c.title)}" placeholder="Nome da etapa" />
       <input name="color" value="${esc(c.color)}" type="color" />
+      bindColumnReorder();
 <div class="column-config-row" data-column-id="${c.id}">
   <div class="column-config-main">
     <input
@@ -431,6 +432,29 @@ async function openColumnsManager() {
   `).join("");
 
   dom.columnsDialog.showModal();
+}
+function bindColumnReorder() {
+  document.querySelectorAll(".move-up").forEach(btn => {
+    btn.onclick = () => {
+      const row = btn.closest(".column-config-row");
+      const prev = row.previousElementSibling;
+
+      if (prev) {
+        row.parentNode.insertBefore(row, prev);
+      }
+    };
+  });
+
+  document.querySelectorAll(".move-down").forEach(btn => {
+    btn.onclick = () => {
+      const row = btn.closest(".column-config-row");
+      const next = row.nextElementSibling;
+
+      if (next) {
+        row.parentNode.insertBefore(next, row);
+      }
+    };
+  });
 }
 function renderBoard(){
   let fs = filtered();
