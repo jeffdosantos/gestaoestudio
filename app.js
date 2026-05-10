@@ -919,19 +919,20 @@ function openDetails(t) {
     <button class="btn danger" type="button" id="detailsDelete">🗑️ Excluir</button>
     <button class="btn success" type="button" id="detailsComplete">✅ Concluir serviço</button>
   </div>
-
+  };
   <button class="btn primary" type="button" id="detailsEdit">✎ Editar</button>
 </div>
-  $("#detailsEdit").onclick = () => {
-    dom.detailsDialog.close();
-    openTask(t);
-  };
+$("#detailsEdit").onclick = () => {
+  dom.detailsDialog.close();
+  openTask(t);
+};
 
-  $("#detailsDelete").onclick = async () => {
-    dom.detailsDialog.close();
-    dom.taskId.value = t.id;
-    await deleteTask();
-  };
+$("#detailsDelete").onclick = async () => {
+  dom.detailsDialog.close();
+  dom.taskId.value = t.id;
+  await deleteTask();
+};
+
 $("#detailsComplete").onclick = async () => {
   await completeTask(t.id);
 };
