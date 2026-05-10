@@ -799,3 +799,25 @@ body {
 .filter-panel.hidden {
   display: none !important;
 }
+.column-add-btn {
+  width: calc(100% - 20px);
+  height: 34px;
+  margin: 10px;
+
+  border: 1px dashed rgba(148, 163, 184, .45);
+  border-radius: 12px;
+
+  background: rgba(255,255,255,.65);
+  color: #64748b;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.column-add-btn:hover {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
