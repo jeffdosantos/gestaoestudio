@@ -220,8 +220,9 @@ async function saveClient(e) {
 
   dom.clientDialog.close();
 
-  await loadClients();
-  await loadTasks();
+await loadMembers();
+await loadClients();
+await loadTasks();
 
   toast("Cliente cadastrado.");
 }
@@ -233,6 +234,12 @@ function dayName(d){return ["Domingo","Segunda","Terça","Quarta","Quinta","Sext
 function startWeek(d=new Date()){let c=new Date(d),day=c.getDay(),diff=day===0?-6:1-day;c.setDate(c.getDate()+diff);c.setHours(0,0,0,0);return c}
 function addDays(d,n){let c=new Date(d);c.setDate(c.getDate()+n);return c}
 function memberById(id){return members.find(m=>m.id===id)||null}
+function clientById(id) {
+  return clients.find(c => c.id === id) || null;
+}
+function clientName(id, fallback = "Sem cliente") {
+  return clientById(id)?.nome || fallback;
+}
 function memberName(id){return memberById(id)?.nome||"Sem responsável"}
 function memberColor(id){return memberById(id)?.cor||"#2563eb"}
 function stageLabel(id){return COLUMNS.find(c=>c.id===id)?.title.replace(/^[A-K]\s/,"")||id}
@@ -350,7 +357,7 @@ function renderBoard(){
 }
 function card(t){let chk=Array.isArray(t.checklist)?t.checklist:[],done=chk.filter(i=>i.done||i.concluido).length,total=chk.length||13,doneN=chk.length?done:Math.min(6,total), pct=Math.round(doneN/total*100);let m=memberById(t.responsavel_id);return `<article class="task-card priority-${esc(t.prioridade||"media")} ${overdue(t)?"overdue":""} ${isBlocked(t)?"blocked":""}" draggable="true" data-id="${t.id}">
 <div class="card-top"><div><span class="tag ${esc(t.prioridade||"media")}">● ${PRIORITY[t.prioridade]||"Média"}</span></div><button class="card-menu" data-edit="${t.id}">✎</button></div>
-<p class="client-name">${esc(clientName(clientName(t.cliente_id)_id))}</p><h3 class="task-title">${esc(t.titulo)}</h3>
+<p class="client-name">${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))}</p><h3 class="task-title">${esc(t.titulo)}</h3>
 <div class="tags">${t.tipo_demanda?`<span class="tag">${esc(t.tipo_demanda)}</span>`:""}${m?`<span class="tag" style="background:#eef6ff;color:#0754e7">${esc(m.nome)}</span>`:""}</div>
 <div class="tags"><span class="tag status-${esc(t.status||"em_andamento")}">${STATUS[t.status]||"Em andamento"}</span><span class="due-line">🗓️ ${fmt(t.prazo)}</span></div>
 <div class="progress"><span style="width:${pct}%"></span></div><div class="muted">${doneN}/${total} itens</div>
