@@ -249,7 +249,7 @@ function filtered() {
 
   return tasks.filter(t => {
     const searchText = [
-      clientName(t.cliente_id),
+      clientName(t.cliente_id, t.cliente),
       t.titulo,
       t.proxima_acao,
       t.tipo_demanda,
@@ -347,13 +347,40 @@ function renderBoard(){
   attachDrag();
   enableBoardMouseScroll();
 }
-function card(t){let chk=Array.isArray(t.checklist)?t.checklist:[],done=chk.filter(i=>i.done||i.concluido).length,total=chk.length||13,doneN=chk.length?done:Math.min(6,total), pct=Math.round(doneN/total*100);let m=memberById(t.responsavel_id);return `<article class="task-card priority-${esc(t.prioridade||"media")} ${overdue(t)?"overdue":""} ${isBlocked(t)?"blocked":""}" draggable="true" data-id="${t.id}">
-<div class="card-top"><div><span class="tag ${esc(t.prioridade||"media")}">● ${PRIORITY[t.prioridade]||"Média"}</span></div><button class="card-menu" data-edit="${t.id}">✎</button></div>
-<p class="client-name">${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))}</p><h3 class="task-title">${esc(t.titulo)}</h3>
-<div class="tags">${t.tipo_demanda?`<span class="tag">${esc(t.tipo_demanda)}</span>`:""}${m?`<span class="tag" style="background:#eef6ff;color:#0754e7">${esc(m.nome)}</span>`:""}</div>
-<div class="tags"><span class="tag status-${esc(t.status||"em_andamento")}">${STATUS[t.status]||"Em andamento"}</span><span class="due-line">🗓️ ${fmt(t.prazo)}</span></div>
-<div class="progress"><span style="width:${pct}%"></span></div><div class="muted">${doneN}/${total} itens</div>
-${t.proxima_acao?`<div class="next-action">→ ${esc(t.proxima_acao)}</div>`:""}</article>`}
+function card(t) {
+  let chk = Array.isArray(t.checklist) ? t.checklist : [];
+  let done = chk.filter(i => i.done || i.concluido).length;
+  let total = chk.length || 13;
+  let doneN = chk.length ? done : Math.min(6, total);
+  let pct = Math.round(doneN / total * 100);
+  let m = memberById(t.responsavel_id);
+  let clienteNome = clientName(t.cliente_id, t.cliente || "Sem cliente");
+
+  return `<article class="task-card priority-${esc(t.prioridade || "media")} ${overdue(t) ? "overdue" : ""} ${isBlocked(t) ? "blocked" : ""}" draggable="true" data-id="${t.id}">
+    <div class="card-top">
+      <div><span class="tag ${esc(t.prioridade || "media")}">● ${PRIORITY[t.prioridade] || "Média"}</span></div>
+      <button class="card-menu" data-edit="${t.id}">✎</button>
+    </div>
+
+    <p class="client-name">${esc(clienteNome)}</p>
+    <h3 class="task-title">${esc(t.titulo)}</h3>
+
+    <div class="tags">
+      ${t.tipo_demanda ? `<span class="tag">${esc(t.tipo_demanda)}</span>` : ""}
+      ${m ? `<span class="tag" style="background:#eef6ff;color:#0754e7">${esc(m.nome)}</span>` : ""}
+    </div>
+
+    <div class="tags">
+      <span class="tag status-${esc(t.status || "em_andamento")}">${STATUS[t.status] || "Em andamento"}</span>
+      <span class="due-line">🗓️ ${fmt(t.prazo)}</span>
+    </div>
+
+    <div class="progress"><span style="width:${pct}%"></span></div>
+    <div class="muted">${doneN}/${total} itens</div>
+
+    ${t.proxima_acao ? `<div class="next-action">→ ${esc(t.proxima_acao)}</div>` : ""}
+  </article>`;
+}
 function attachDrag() {
 
   $$(".task-card").forEach(el => {
@@ -435,7 +462,29 @@ function attachDrag() {
 
 }
 async function moveTask(id,etapa){let patch={etapa,status:statusFromStage(etapa),updated_by:session?.user?.email||null,bloqueado:etapa==="bloqueado"};let {error}=await supabase.from("tasks").update(patch).eq("id",id);if(error)return toast(error.message,"error");tasks=tasks.map(t=>t.id===id?{...t,...patch}:t);renderAll()}
-function renderClients(){dom.clientBody.innerHTML=filtered().filter(t=>!isDone(t)).map(t=>`<tr><td>${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))}</td><td>${esc(t.titulo)}</td><td><span class="pill blue">${esc(memberName(t.responsavel_id))}</span></td><td>${esc(stageLabel(t.etapa))}</td><td>🗓️ ${fmt(t.prazo)}</td><td><span class="pill ${esc(t.prioridade||"media")}">● ${PRIORITY[t.prioridade]||"Média"}</span></td><td><span class="pill ${t.status==="revisao_interna"?"purple":t.status==="aguardando_cliente"?"grey":t.status==="bloqueado"?"red":t.status==="aprovado"?"green":"blue"}">${STATUS[t.status]||"Em andamento"}</span></td><td>→ ${esc(t.proxima_acao||"—")}</td><td><button class="card-menu" data-edit="${t.id}">✎</button></td></tr>`).join("");$$("[data-edit]").forEach(b=>b.onclick=()=>openTask(tasks.find(t=>t.id===b.dataset.edit)))}
+function renderClients() {
+  dom.clientBody.innerHTML = filtered()
+    .filter(t => !isDone(t))
+    .map(t => {
+      const clienteNome = clientName(t.cliente_id, t.cliente || "Sem cliente");
+
+      return `<tr>
+        <td>${esc(clienteNome)}</td>
+        <td>${esc(t.titulo)}</td>
+        <td><span class="pill blue">${esc(memberName(t.responsavel_id))}</span></td>
+        <td>${esc(stageLabel(t.etapa))}</td>
+        <td>🗓️ ${fmt(t.prazo)}</td>
+        <td><span class="pill ${esc(t.prioridade || "media")}">● ${PRIORITY[t.prioridade] || "Média"}</span></td>
+        <td><span class="pill ${t.status === "revisao_interna" ? "purple" : t.status === "aguardando_cliente" ? "grey" : t.status === "bloqueado" ? "red" : t.status === "aprovado" ? "green" : "blue"}">${STATUS[t.status] || "Em andamento"}</span></td>
+        <td>→ ${esc(t.proxima_acao || "—")}</td>
+        <td><button class="card-menu" data-edit="${t.id}">✎</button></td>
+      </tr>`;
+    }).join("");
+
+  $$("[data-edit]").forEach(b => {
+    b.onclick = () => openTask(tasks.find(t => t.id === b.dataset.edit));
+  });
+}
 function renderTeam() {
   dom.team.innerHTML = members.map(m => {
     const mine = tasks.filter(t =>
