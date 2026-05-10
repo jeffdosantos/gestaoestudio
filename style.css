@@ -799,3 +799,47 @@ body {
 .filter-panel.hidden {
   display: none !important;
 }
+.client-group-row {
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.client-group-row td {
+  padding: 14px 18px;
+}
+
+.client-group-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.client-group-head strong {
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.client-group-head span {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.client-expand-btn {
+  margin-left: auto;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #475569;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.client-task-row {
+  background: #ffffff;
+}
+
+.client-task-row td:first-child {
+  border-left: 4px solid #dbeafe;
+}
