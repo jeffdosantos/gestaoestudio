@@ -2,7 +2,6 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
 
 let COLUMNS = [];
-.map(([id,title,color,help])=>({id,title,color,help}));
 const DEMAND_TYPES=["Identidade visual","Social media","Post avulso","Carrossel","Campanha","Landing page","Site","Apresentação","Impressos","Motion / vídeo","Embalagem","Edição de imagem","Peça urgente","Ajuste simples","Projeto estratégico"];
 const STATUS={em_andamento:"Em andamento",revisao_interna:"Em revisão",aguardando_cliente:"Aguardando cliente",bloqueado:"Bloqueado",aprovado:"Aprovado",entregue:"Entregue"};
 const PRIORITY={urgente:"Urgente",alta:"Alta",media:"Média",baixa:"Baixa"};
