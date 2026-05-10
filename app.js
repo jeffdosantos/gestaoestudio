@@ -357,7 +357,7 @@ function renderBoard(){
 }
 function card(t){let chk=Array.isArray(t.checklist)?t.checklist:[],done=chk.filter(i=>i.done||i.concluido).length,total=chk.length||13,doneN=chk.length?done:Math.min(6,total), pct=Math.round(doneN/total*100);let m=memberById(t.responsavel_id);return `<article class="task-card priority-${esc(t.prioridade||"media")} ${overdue(t)?"overdue":""} ${isBlocked(t)?"blocked":""}" draggable="true" data-id="${t.id}">
 <div class="card-top"><div><span class="tag ${esc(t.prioridade||"media")}">● ${PRIORITY[t.prioridade]||"Média"}</span></div><button class="card-menu" data-edit="${t.id}">✎</button></div>
-<p class="client-name">${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))}</p><h3 class="task-title">${esc(t.titulo)}</h3>
+<p class="client-name">${esc(clientName(t.cliente || "Sem cliente"))}</p><h3 class="task-title">${esc(t.titulo)}</h3>
 <div class="tags">${t.tipo_demanda?`<span class="tag">${esc(t.tipo_demanda)}</span>`:""}${m?`<span class="tag" style="background:#eef6ff;color:#0754e7">${esc(m.nome)}</span>`:""}</div>
 <div class="tags"><span class="tag status-${esc(t.status||"em_andamento")}">${STATUS[t.status]||"Em andamento"}</span><span class="due-line">🗓️ ${fmt(t.prazo)}</span></div>
 <div class="progress"><span style="width:${pct}%"></span></div><div class="muted">${doneN}/${total} itens</div>
