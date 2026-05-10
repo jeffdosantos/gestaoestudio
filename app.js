@@ -398,11 +398,7 @@ function renderTeam() {
           <span class="pill blue">${mine.length}</span>
         </div>
 
-        <div class="team-row">
-          <span>Cards em andamento</span>
-          <span class="pill grey">${inProgress.length}/4</span>
-        </div>
-
+        
         <div class="team-row">
           <span>Atrasados</span>
           <span class="pill ${overdueCount ? "red" : "grey"}">${overdueCount}</span>
@@ -418,13 +414,6 @@ function renderTeam() {
           <span style="width:${cap}%"></span>
         </div>
 
-        <p class="muted">Observações<br>
-          ${
-            inProgress.length > 10
-              ? "⚠️ Acima da capacidade recomendada"
-              : "—"
-          }
-        </p>
       </div>
     `;
   }).join("");
