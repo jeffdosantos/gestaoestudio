@@ -914,12 +914,14 @@ function openDetails(t) {
       </div>
     </div>
 
-    <div class="details-footer">
-      <button class="btn danger" type="button" id="detailsDelete">🗑️ Excluir</button>
-      <button class="btn primary" type="button" id="detailsEdit">✎ Editar</button>
-    </div>
-  `;
+   <div class="details-footer">
+  <div class="details-footer-left">
+    <button class="btn danger" type="button" id="detailsDelete">🗑️ Excluir</button>
+    <button class="btn success" type="button" id="detailsComplete">✅ Concluir serviço</button>
+  </div>
 
+  <button class="btn primary" type="button" id="detailsEdit">✎ Editar</button>
+</div>
   $("#detailsEdit").onclick = () => {
     dom.detailsDialog.close();
     openTask(t);
@@ -930,7 +932,9 @@ function openDetails(t) {
     dom.taskId.value = t.id;
     await deleteTask();
   };
-
+$("#detailsComplete").onclick = async () => {
+  await completeTask(t.id);
+};
   dom.detailsBody.querySelectorAll("[data-detail-check]").forEach(input => {
     input.addEventListener("change", async () => {
       const index = Number(input.dataset.detailCheck);
@@ -960,6 +964,34 @@ function openDetails(t) {
   });
 
   dom.detailsDialog.showModal();
+}
+async function completeTask(id) {
+  if (!id) return;
+
+  const patch = {
+    etapa: "entregue",
+    status: "entregue",
+    updated_by: session?.user?.email || null
+  };
+
+  const { error } = await supabase
+    .from("tasks")
+    .update(patch)
+    .eq("id", id);
+
+  if (error) {
+    toast(error.message, "error");
+    return;
+  }
+
+  dom.detailsDialog.close();
+
+  tasks = tasks.map(t =>
+    t.id === id ? { ...t, ...patch } : t
+  );
+
+  renderAll();
+  toast("Serviço finalizado!");
 }
 function openTask(t=null){dom.form.reset();dom.del.style.display=t?"inline-flex":"none";dom.title.textContent=t?"Editar card":"Novo card";dom.taskId.value=t?.id||"";if(t){Object.entries(t).forEach(([k,v])=>{let f=dom.form.elements[k];if(!f)return;if(f.type==="checkbox")f.checked=!!v;else f.value=v??""})}else{dom.form.elements.data_entrada.value=today();dom.form.elements.etapa.value="entrada"}renderChecklist(t?.checklist || []);dom.dialog.showModal()}
 async function saveTask(e){
