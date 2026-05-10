@@ -399,11 +399,14 @@ async function openColumnsManager() {
           placeholder="Nome da etapa"
         />
 
-        <input
-          name="color"
-          value="${esc(c.color)}"
-          type="color"
-        />
+      <label class="color-picker-wrap">
+  <input
+    class="color-picker"
+    name="color"
+    value="${esc(c.color)}"
+    type="color"
+  />
+</label>
       </div>
 
       <div class="column-config-actions">
