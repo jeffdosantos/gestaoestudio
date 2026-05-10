@@ -782,7 +782,31 @@ function renderTeam() {
 function renderDeadlines(){let days=[0,1,2,3,4,5].map(i=>addDays(startWeek(),i));dom.weekDead.innerHTML=days.map(d=>{let dayTasks=tasks.filter(t=>t.prazo===d.toISOString().slice(0,10)&&!isDone(t));return `<div class="deadline-card"><h3>🗓️ ${dayName(d)}</h3>${dayTasks.length?dayTasks.map(t=>`<div class="deadline-item"><span class="dot"></span><div>${esc(t.titulo)}<br><span class="muted">${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))}</span></div></div>`).join(""):`<p class="muted" style="text-align:center;margin-top:30px">Sem vencimentos</p>`}</div>`}).join("");let urg=tasks.filter(t=>(t.prioridade==="urgente"||overdue(t))&&!isDone(t));dom.urg.innerHTML=urg.length?urg.map(t=>`<div class="deadline-item"><span class="dot"></span><div>${esc(t.titulo)} — ${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))}<br><span>${esc(t.proxima_acao||"resolver prioridade")}</span></div></div>`).join(""):"<p>Nenhuma urgência real no momento.</p>"}
 function renderBlockers(){let list=tasks.filter(t=>isBlocked(t)&&!isDone(t));dom.blockers.innerHTML=list.length?list.map(t=>`<div class="block-card"><h3>${esc(t.titulo)}</h3><p class="muted">${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))} • ${esc(memberName(t.responsavel_id))}</p><p><strong>Por que está bloqueado?</strong><br>${esc(t.motivo_bloqueio||"Sem motivo registrado")}</p><p><strong>Próxima ação:</strong> ${esc(t.proxima_acao||"Definir destrave")}</p></div>`).join(""):"<div class='info-card'>Nenhum bloqueio registrado.</div>"}
 function renderMetrics(){let newWeek=tasks.filter(t=>date(t.data_entrada)>=startWeek()).length, delivered=tasks.filter(t=>isDone(t)&&dueThisWeek(t)).length, late=tasks.filter(overdue).length, blocked=tasks.filter(isBlocked).length, waiting=tasks.filter(t=>t.status==="aguardando_cliente"||t.etapa==="enviado_cliente").length;let counts=Object.fromEntries(members.map(m=>[m.id,tasks.filter(t=>t.responsavel_id===m.id&&!isDone(t)).length]));let top=members.sort((a,b)=>(counts[b.id]||0)-(counts[a.id]||0))[0];let cards=[["📥",newWeek,"Demandas novas na semana"],["📦",delivered,"Demandas entregues"],["⚠️",late,"Demandas atrasadas"],["🔒",blocked,"Cards bloqueados"],["⏳",waiting,"Cards aguardando cliente"]];dom.metrics.innerHTML=cards.map(([i,n,l])=>`<div class="metric-card"><div class="icon">${i}</div><strong>${n}</strong><span>${l}</span></div>`).join("")+`<div class="metric-card" style="grid-column:span 2"><span>👤 Pessoa com mais demandas</span><p>${esc(top?.nome||"—")} (${top?counts[top.id]:0} demandas)</p></div><div class="metric-card" style="grid-column:span 3"><span>🚧 Principal gargalo da semana</span><p>${waiting?"Aguardando retorno de clientes":blocked?"Bloqueios internos":"Fluxo sem gargalo crítico"}</p></div>`}
-function renderArchive(){let done=tasks.filter(isDone);dom.archive.innerHTML=done.length?done.map(t=>`<div class="archive-card"><h3>${esc(t.titulo)}</h3><p>${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))} • ${esc(memberName(t.responsavel_id))}</p><span class="pill green">Entregue</span></div>`).join(""):"<div class='info-card'>Nenhum card entregue ainda.</div>"}
+function renderArchive() {
+  let done = tasks.filter(isDone);
+
+  dom.archive.innerHTML = done.length
+    ? done.map(t => `
+      <div class="archive-card">
+        <h3>${esc(t.titulo)}</h3>
+        <p>${esc(clientName(t.cliente_id, t.cliente || "Sem cliente"))} • ${esc(memberName(t.responsavel_id))}</p>
+
+        <div class="archive-actions">
+          <span class="pill green">Entregue</span>
+          <button class="btn ghost reopen-task-btn" data-reopen="${t.id}">
+            ↩ Reabrir
+          </button>
+        </div>
+      </div>
+    `).join("")
+    : "<div class='info-card'>Nenhum card entregue ainda.</div>";
+
+  document.querySelectorAll("[data-reopen]").forEach(btn => {
+    btn.onclick = async () => {
+      await reopenTask(btn.dataset.reopen);
+    };
+  });
+}
 function renderStatic(){dom.checkin.innerHTML=["O que entrou de novo?","O que está atrasado ou em risco?","O que está bloqueado?","Quem está sobrecarregado?","O que precisa ser entregue hoje?","Quais cards precisam mudar de etapa?"].map((x,i)=>`<div class="info-card"><h3>${i+1}. ${x}</h3><p class="muted">Atualize o quadro durante a reunião, não depois.</p></div>`).join("");let rules=["Nenhuma demanda deve ficar apenas na conversa; toda demanda vira card.","Todo card precisa ter responsável, prazo e próxima ação.","Se não tem briefing suficiente, não vai para criação.","Se está aguardando cliente, registrar a data do envio.","Se está bloqueado, precisa ter motivo e responsável por destravar.","Não iniciar novas tarefas se há muitas tarefas paradas em revisão, ajustes ou entrega.","Toda alteração solicitada pelo cliente deve ser registrada no card.","Cards atrasados devem ser marcados com alerta visual.","Ao final da semana, revisar cards concluídos e arquivar.","O quadro deve ser atualizado diariamente pela equipe."];dom.rules.innerHTML=rules.map(r=>`<li>${esc(r)}</li>`).join("")}
 function renderChecklist(list = []) {
   const box = $("#checklistContainer");
@@ -937,6 +961,32 @@ $("#detailsDelete").onclick = async () => {
 $("#detailsComplete").onclick = async () => {
   await completeTask(t.id);
 };
+  async function reopenTask(id) {
+  if (!id) return;
+
+  const patch = {
+    etapa: "aprovado",
+    status: "aprovado",
+    updated_by: session?.user?.email || null
+  };
+
+  const { error } = await supabase
+    .from("tasks")
+    .update(patch)
+    .eq("id", id);
+
+  if (error) {
+    toast(error.message, "error");
+    return;
+  }
+
+  tasks = tasks.map(t =>
+    t.id === id ? { ...t, ...patch } : t
+  );
+
+  renderAll();
+  toast("Serviço reaberto.");
+}
   dom.detailsBody.querySelectorAll("[data-detail-check]").forEach(input => {
     input.addEventListener("change", async () => {
       const index = Number(input.dataset.detailCheck);
