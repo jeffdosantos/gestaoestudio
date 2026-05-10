@@ -473,26 +473,68 @@ function attachDrag() {
 }
 async function moveTask(id,etapa){let patch={etapa,status:statusFromStage(etapa),updated_by:session?.user?.email||null,bloqueado:etapa==="bloqueado"};let {error}=await supabase.from("tasks").update(patch).eq("id",id);if(error)return toast(error.message,"error");tasks=tasks.map(t=>t.id===id?{...t,...patch}:t);renderAll()}
 function renderClients() {
-  dom.clientBody.innerHTML = filtered()
-    .filter(t => !isDone(t))
-    .map(t => {
-      const clienteNome = clientName(t.cliente_id, t.cliente || "Sem cliente");
+  const activeTasks = filtered().filter(t => !isDone(t));
 
-      return `<tr>
-        <td>${esc(clienteNome)}</td>
-        <td>${esc(t.titulo)}</td>
-        <td><span class="pill blue">${esc(memberName(t.responsavel_id))}</span></td>
-        <td>${esc(stageLabel(t.etapa))}</td>
-        <td>🗓️ ${fmt(t.prazo)}</td>
-        <td><span class="pill ${esc(t.prioridade || "media")}">● ${PRIORITY[t.prioridade] || "Média"}</span></td>
-        <td><span class="pill ${t.status === "revisao_interna" ? "purple" : t.status === "aguardando_cliente" ? "grey" : t.status === "bloqueado" ? "red" : t.status === "aprovado" ? "green" : "blue"}">${STATUS[t.status] || "Em andamento"}</span></td>
-        <td>→ ${esc(t.proxima_acao || "—")}</td>
-        <td><button class="card-menu" data-edit="${t.id}">✎</button></td>
-      </tr>`;
-    }).join("");
+  const grouped = {};
+
+  activeTasks.forEach(t => {
+    const clienteNome = clientName(
+      t.cliente_id,
+      t.cliente || "Sem cliente"
+    );
+
+    if (!grouped[clienteNome]) {
+      grouped[clienteNome] = [];
+    }
+
+    grouped[clienteNome].push(t);
+  });
+
+  dom.clientBody.innerHTML = Object.entries(grouped).map(([clienteNome, items]) => {
+    const clientKey = clienteNome.toLowerCase().replace(/\s+/g, "-");
+
+    return `
+      <tr class="client-group-row" data-client-toggle="${clientKey}">
+        <td colspan="9">
+          <div class="client-group-head">
+            <strong>${esc(clienteNome)}</strong>
+            <span>${items.length} trabalho${items.length > 1 ? "s" : ""} ativo${items.length > 1 ? "s" : ""}</span>
+            <button class="client-expand-btn" type="button">Ver trabalhos ▾</button>
+          </div>
+        </td>
+      </tr>
+
+      ${items.map(t => `
+        <tr class="client-task-row client-task-${clientKey} hidden">
+          <td></td>
+          <td>${esc(t.titulo)}</td>
+          <td><span class="pill blue">${esc(memberName(t.responsavel_id))}</span></td>
+          <td>${esc(stageLabel(t.etapa))}</td>
+          <td>🗓️ ${fmt(t.prazo)}</td>
+          <td><span class="pill ${esc(t.prioridade || "media")}">● ${PRIORITY[t.prioridade] || "Média"}</span></td>
+          <td><span class="pill ${t.status === "revisao_interna" ? "purple" : t.status === "aguardando_cliente" ? "grey" : t.status === "bloqueado" ? "red" : t.status === "aprovado" ? "green" : "blue"}">${STATUS[t.status] || "Em andamento"}</span></td>
+          <td>→ ${esc(t.proxima_acao || "—")}</td>
+          <td><button class="card-menu" data-edit="${t.id}">✎</button></td>
+        </tr>
+      `).join("")}
+    `;
+  }).join("");
+
+  document.querySelectorAll("[data-client-toggle]").forEach(row => {
+    row.onclick = () => {
+      const key = row.dataset.clientToggle;
+
+      document.querySelectorAll(`.client-task-${key}`).forEach(taskRow => {
+        taskRow.classList.toggle("hidden");
+      });
+    };
+  });
 
   $$("[data-edit]").forEach(b => {
-    b.onclick = () => openTask(tasks.find(t => t.id === b.dataset.edit));
+    b.onclick = e => {
+      e.stopPropagation();
+      openTask(tasks.find(t => t.id === b.dataset.edit));
+    };
   });
 }
 function renderTeam() {
