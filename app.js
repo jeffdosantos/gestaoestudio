@@ -394,8 +394,6 @@ async function openColumnsManager() {
     <div class="column-config-row" data-column-id="${c.id}">
       <input name="title" value="${esc(c.title)}" placeholder="Nome da etapa" />
       <input name="color" value="${esc(c.color)}" type="color" />
-      bindColumnReorder();
-<div class="column-config-row" data-column-id="${c.id}">
   <div class="column-config-main">
     <input
       name="title"
@@ -430,7 +428,7 @@ async function openColumnsManager() {
       </label>
     </div>
   `).join("");
-
+   bindColumnReorder();
   dom.columnsDialog.showModal();
 }
 function bindColumnReorder() {
