@@ -843,3 +843,39 @@ body {
 .client-task-row td:first-child {
   border-left: 4px solid #dbeafe;
 }
+.column-add-btn {
+  width: calc(100% - 20px);
+
+  margin: 10px;
+
+  height: 34px;
+
+  border: 1px dashed rgba(148, 163, 184, .35);
+
+  background: rgba(255,255,255,.55);
+
+  color: #64748b;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    color .18s ease,
+    transform .18s ease;
+}
+
+.column-add-btn:hover {
+  background: #ffffff;
+
+  border-color: #cbd5e1;
+
+  color: #0f172a;
+
+  transform: translateY(-1px);
+}
