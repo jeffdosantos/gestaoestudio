@@ -86,9 +86,10 @@ clienteSelect: $("#clienteSelect"),
   checkin: $("#checkinGrid"),
   rules: $("#rulesList")
 };
-dom.manageColumns.onclick = openColumnsManager;
-dom.closeColumns.onclick = () => dom.columnsDialog.close();
-dom.cancelColumns.onclick = () => dom.columnsDialog.close();
+if (dom.manageColumns) dom.manageColumns.onclick = openColumnsManager;
+if (dom.closeColumns) dom.closeColumns.onclick = () => dom.columnsDialog.close();
+if (dom.cancelColumns) dom.cancelColumns.onclick = () => dom.columnsDialog.close();
+if (dom.columnsForm) dom.columnsForm.onsubmit = saveColumns;
 if (dom.filterToggle && dom.filterPanel) {
   dom.filterToggle.onclick = (e) => {
     e.stopPropagation();
