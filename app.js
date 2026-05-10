@@ -520,6 +520,44 @@ function card(t) {
   </article>`;
 }
 function attachDrag() {
+const isMobile = window.matchMedia("(max-width: 760px)").matches;
+
+  if (isMobile) {
+    $$(".task-card").forEach(cardEl => {
+      cardEl.removeAttribute("draggable");
+
+      cardEl.onclick = e => {
+        if (e.target.closest("[data-edit]")) return;
+
+        openDetails(
+          tasks.find(t => t.id === cardEl.dataset.id)
+        );
+      };
+    });
+
+    $$("[data-edit]").forEach(btn => {
+      btn.onclick = e => {
+        e.stopPropagation();
+        openTask(
+          tasks.find(t => t.id === btn.dataset.edit)
+        );
+      };
+    });
+
+    $$("[data-add-stage]").forEach(btn => {
+      btn.onclick = () => {
+        openTask();
+
+        setTimeout(() => {
+          if (dom.form?.elements?.etapa) {
+            dom.form.elements.etapa.value = btn.dataset.addStage;
+          }
+        }, 50);
+      };
+    });
+
+    return;
+  }
 
   $$(".task-card").forEach(el => {
 
