@@ -1087,3 +1087,25 @@ body {
     touch-action: pan-y !important;
   }
 }
+@media (max-width: 760px) {
+  .task-card,
+  .column,
+  .column-body,
+  .board,
+  #view-kanban {
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .task-card {
+    user-select: auto !important;
+  }
+
+  .board {
+    overflow: visible !important;
+  }
+
+  body {
+    overflow-y: auto !important;
+  }
+}
