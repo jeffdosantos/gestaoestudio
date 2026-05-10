@@ -1124,3 +1124,16 @@ body {
 .btn.success:hover {
   background: #bbf7d0;
 }
+.archive-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.reopen-task-btn {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+}
