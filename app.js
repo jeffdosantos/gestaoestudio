@@ -201,7 +201,17 @@ async function saveClient(e) {
   e.preventDefault();
 
   const fd = new FormData(dom.clientForm);
+const clientNameValue = fd.get("nome").trim();
 
+const alreadyExists = clients.some(c =>
+  c.nome.trim().toLowerCase() ===
+  clientNameValue.toLowerCase()
+);
+
+if (alreadyExists) {
+  toast("Já existe um cliente com esse nome.", "error");
+  return;
+}
   const payload = {
     nome: fd.get("nome").trim(),
     ativo: true
