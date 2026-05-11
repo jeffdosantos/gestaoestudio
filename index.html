@@ -199,19 +199,19 @@
       <div class="modal-head"><div><small>Card de demanda</small><h2 id="dialogTitle">Novo card</h2></div><button type="button" id="closeDialogButton" class="icon-btn">×</button></div>
       <input type="hidden" name="id" id="taskId" />
       <div class="form-grid">
-       <label>
+<label>
   Cliente *
   <input
-  id="clienteSearchInput"
-  list="clientesList"
-  placeholder="Digite o nome do cliente..."
-  autocomplete="off"
-  required
-/>
+    id="clienteSearchInput"
+    list="clientesList"
+    placeholder="Digite o nome do cliente..."
+    autocomplete="off"
+    required
+  />
 
-<input type="hidden" name="cliente_id" id="clienteIdInput" />
+  <input type="hidden" name="cliente_id" id="clienteIdInput" />
 
-<datalist id="clientesList"></datalist>
+  <datalist id="clientesList"></datalist>
 </label>
 <label>Projeto / demanda *<input name="titulo" required /></label>
         <label>Tipo de peça<select name="tipo_demanda" id="tipoDemandaSelect"></select></label><label>Responsável<select name="responsavel_id" id="responsavelSelect"></select></label>
