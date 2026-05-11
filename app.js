@@ -961,44 +961,7 @@ $("#detailsDelete").onclick = async () => {
 $("#detailsComplete").onclick = async () => {
   await completeTask(t.id);
 };
-async function reopenTask(id) {
-  if (!id) return;
-
-  const currentTask = tasks.find(t => t.id === id);
-
-  if (!currentTask) {
-    toast("Card não encontrado.", "error");
-    return;
-  }
-
-  const patch = {
-    etapa: currentTask.previous_etapa || "aprovado",
-    status: currentTask.previous_status || "aprovado",
-
-    previous_etapa: null,
-    previous_status: null,
-
-    updated_by: session?.user?.email || null
-  };
-
-  const { error } = await supabase
-    .from("tasks")
-    .update(patch)
-    .eq("id", id);
-
-  if (error) {
-    toast(error.message, "error");
-    return;
-  }
-
-  tasks = tasks.map(t =>
-    t.id === id ? { ...t, ...patch } : t
-  );
-
-  renderAll();
-
-  toast("Serviço reaberto na etapa anterior.");
-}
+  
   dom.detailsBody.querySelectorAll("[data-detail-check]").forEach(input => {
     input.addEventListener("change", async () => {
       const index = Number(input.dataset.detailCheck);
@@ -1028,6 +991,41 @@ async function reopenTask(id) {
   });
 
   dom.detailsDialog.showModal();
+}
+async function reopenTask(id) {
+  if (!id) return;
+
+  const currentTask = tasks.find(t => t.id === id);
+
+  if (!currentTask) {
+    toast("Card não encontrado.", "error");
+    return;
+  }
+
+  const patch = {
+    etapa: currentTask.previous_etapa || "aprovado",
+    status: currentTask.previous_status || "aprovado",
+    previous_etapa: null,
+    previous_status: null,
+    updated_by: session?.user?.email || null
+  };
+
+  const { error } = await supabase
+    .from("tasks")
+    .update(patch)
+    .eq("id", id);
+
+  if (error) {
+    toast(error.message, "error");
+    return;
+  }
+
+  tasks = tasks.map(t =>
+    t.id === id ? { ...t, ...patch } : t
+  );
+
+  renderAll();
+  toast("Serviço reaberto na etapa anterior.");
 }
 async function completeTask(id) {
   if (!id) return;
