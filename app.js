@@ -33,6 +33,9 @@ clientDialog: $("#clientDialog"),
 clientForm: $("#clientForm"),
 closeClient: $("#closeClientDialogButton"),
 cancelClient: $("#cancelClientButton"),
+clienteSearchInput: $("#clienteSearchInput"),
+clienteIdInput: $("#clienteIdInput"),
+clientesList: $("#clientesList"),
 clienteSelect: $("#clienteSelect"),
   clienteSelect: $("#clienteSelect"),
   filterToggle: $("#filterToggleButton"),
@@ -188,15 +191,25 @@ function clientName(id, fallback = "Sem cliente") {
   return clientById(id)?.nome || fallback;
 }
 function fillClients() {
-  if (!dom.clienteSelect) return;
+  if (!dom.clientesList) return;
 
-  dom.clienteSelect.innerHTML =
-    "<option value=''>Selecione um cliente</option>" +
-    clients.map(c => `
-      <option value="${c.id}">${esc(c.nome)}</option>
-    `).join("");
+  const sortedClients = [...clients].sort((a, b) =>
+    a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" })
+  );
+
+  dom.clientesList.innerHTML = sortedClients.map(c => `
+    <option value="${esc(c.nome)}"></option>
+  `).join("");
 }
+dom.clienteSearchInput?.addEventListener("input", () => {
+  const typedName = dom.clienteSearchInput.value.trim().toLowerCase();
 
+  const foundClient = clients.find(c =>
+    c.nome.trim().toLowerCase() === typedName
+  );
+
+  dom.clienteIdInput.value = foundClient ? foundClient.id : "";
+});
 async function loadClients() {
   const { data, error } = await supabase
     .from("clients")
@@ -1079,7 +1092,10 @@ async function saveTask(e){
       text: DEFAULT_CHECKLIST[index],
       done: el.checked
     }));
-
+if (dom.clienteSearchInput && dom.clienteIdInput) {
+  dom.clienteSearchInput.value = clientName(t.cliente_id, "");
+  dom.clienteIdInput.value = t.cliente_id || "";
+}
   let payload = {
 cliente_id: fd.get("cliente_id") || null,
     titulo: fd.get("titulo"),
